@@ -6,62 +6,43 @@
  * Time: 19:16
  */
 
+$debug = false;
 $totalLength = 0;
 while ($line = trim(fgets(STDIN))) {
-    print "> " . $line . "\n";
-    $totalLength = decompress($line);
+    if($debug) print "> " . $line . "\n";
+    $length = decompress($line,1,$debug);
+    $totalLength += $length;
+    if($debug) print "> length: " . $length . "\n\n";
 }
-
+if($debug) echo "\n";
 print "$totalLength bytes\n";
 
-function decompress($line)
+function decompress($line,$depth = 1,$debug=false)
 {
-    $offset = -1;
-    $newLine = '';
-    //$posA = 0;
-    //$posB = 0;
-    //$posX = 0;
-    $characters = 0;
+    if($debug) print str_repeat('>',$depth + 1) . " $line\n";
+    $sum = 0;
+    if(($posA = strpos($line, '(')) !== false) {
+        if($debug) print str_repeat('>',$depth + 2) . " pos of (: $posA\n";
 
-    while (($posA = strpos($line, '(', $offset)) !== false) {
-        print ">>> offset: $offset, posA: $posA\n";
-        if ($posA > $offset) {
-            $characters += strlen(substr($line, $offset, $posA));
-            print ">>> " . substr($line, $offset, $posA) . "\n";
+        if ($posA > 0) {
+            $sum += $posA;
         }
+
         $posX = strpos($line, 'x', $posA);
         $posB = strpos($line, ')', $posA);
-        $nochars = substr($line, $posA + 1, $posX - $posA - 1);
-        $repeats = substr($line, $posX + 1, $posB - $posX - 1);
+        $nochars = intval(substr($line, $posA + 1, $posX - $posA - 1));
+        $repeats = intval(substr($line, $posX + 1, $posB - $posX - 1));
         $chars = substr($line, $posB + 1, $nochars);
-        for ($n = 0; $n < intval($repeats); $n++) {
-            $newLine .= $chars;
+        if($debug) echo str_repeat('>',$depth + 1) . " next: $chars\n";
+        $sum += $repeats * decompress($chars,$depth+1,$debug);
+        if($debug) echo str_repeat('>',$depth + 1) . " ($nochars".'x'."$repeats) sum: $sum\n";
+        if(strlen($line) > $posB + 1 + $nochars) {
+            $sum += decompress(substr($line,$posB+1+$nochars),$depth+1,$debug);
         }
-
-        if(strpos($newLine,'(') !== false) {
-            $characters += decompress($newLine);
-
-        }
-        else {
-            $characters += strlen($newLine);
-        }
-        $offset = $posB + $nochars + 1;
     }
-
-
-    if ($offset > 0 && $offset < strlen($line)) {
-        $characters += strlen(substr($line, $offset));
-        print ">>> " . substr($line, $offset) . "\n";
-
-    }
-
-    if ($newLine == '') {
+    else {
         return strlen($line);
-    } else {
-        return $characters;
     }
+    return $sum;
 
 }
-
-// 012345
-// (1x2)a
