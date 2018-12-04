@@ -29,12 +29,17 @@ class Day1Part2Command extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $contents = [];
-        if ($filename = $input->getArgument('filename')) {
-            $contents = file($filename);
+        if ($filenames = $input->getArgument('filename')) {
+            if (!is_array($filenames)) {
+                $filenames = [$filenames];
+            }
+            foreach ($filenames as $filename) {
+                $contents = file($filename);
+            }
         } else {
             if (0 === ftell(STDIN)) {
                 while ($row = fgets(STDIN)) {
-                    $contents[] = $row;
+                    $contents[] = trim($row);
                 }
             } else {
                 throw new \RuntimeException("Please provide a filename or pipe content to STDIN.");

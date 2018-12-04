@@ -16,13 +16,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Day2Part2Command extends Command
+class Day3Part2Command extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('day2:fabricid')
-            ->setDescription('Day 2 / part 2')
+            ->setName('day3:nooverlap')
+            ->setDescription('Day 3 / part 2')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
     }
@@ -30,13 +30,8 @@ class Day2Part2Command extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $contents = [];
-        if ($filenames = $input->getArgument('filename')) {
-            if (!is_array($filenames)) {
-                $filenames = [$filenames];
-            }
-            foreach ($filenames as $filename) {
-                $contents = file($filename);
-            }
+        if ($filename = $input->getArgument('filename')) {
+            $contents = file($filename);
         } else {
             if (0 === ftell(STDIN)) {
                 while ($row = fgets(STDIN)) {
@@ -47,8 +42,8 @@ class Day2Part2Command extends Command
             }
         }
 
-        $sum = Day2::fabricId($contents);
+        $sum = \App\Day3::noOverlap($contents);
 
-        $output->writeln('Fabric ID: ' . $sum);
+        $output->writeln('No overlap: ' . $sum);
     }
 }
