@@ -16,13 +16,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Day4Part1Command extends Command
+class Day4Part2Command extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('day4:strategy1')
-            ->setDescription('Day 4 / part 1')
+            ->setName('day4:strategy2')
+            ->setDescription('Day 4 / part 2')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
     }
@@ -47,7 +47,7 @@ class Day4Part1Command extends Command
             }
         }
 
-        $sum = \App\Day4::strategy1($contents);
+        $sum = \App\Day4::strategy2($contents);
 
         $output->writeln('Guard ID * Minute: ' . $sum);
     }

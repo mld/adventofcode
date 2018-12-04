@@ -4,109 +4,184 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use App\Day3;
+use App\Day4;
 use PHPUnit\Framework\TestCase;
 
-final class Day3Test extends TestCase
+final class Day4Test extends TestCase
 {
-
-// Each Elf has made a claim about which area of fabric would be ideal for Santa's suit. All claims have an ID and
-// consist of a single rectangle with edges parallel to the edges of the fabric. Each claim's rectangle is defined as
-// follows:
-//
-// The number of inches between the left edge of the fabric and the left edge of the rectangle.
-// The number of inches between the top edge of the fabric and the top edge of the rectangle.
-// The width of the rectangle in inches.
-// The height of the rectangle in inches.
-//
-// A claim like #123 @ 3,2: 5x4 means that claim ID 123 specifies a rectangle 3 inches from the left edge, 2 inches from
-// the top edge, 5 inches wide, and 4 inches tall. Visually, it claims the square inches of fabric represented by #
-// (and ignores the square inches of fabric represented by .) in the diagram below:
-//
-//...........
-//...........
-//...#####...
-//...#####...
-//...#####...
-//...#####...
-//...........
-//...........
-//...........
-
     /**
-     * @dataProvider fabricDataProvider
+     * @dataProvider shiftDataProvider
      */
     public function testParseCommands($data, $expected)
     {
-        $result = Day3::parse($data);
+        $result = Day4::parse($data);
 
-        $this->assertEquals($expected['id'], $result['id']);
-        $this->assertEquals($expected['left'], $result['left']);
-        $this->assertEquals($expected['top'], $result['top']);
-        $this->assertEquals($expected['wide'], $result['wide']);
-        $this->assertEquals($expected['tall'], $result['tall']);
+        foreach (['year', 'month', 'day', 'hour', 'minute', 'id', 'action'] as $id) {
+            $this->assertEquals($expected[$id], $result[$id]);
+        }
     }
 
     /**
-     * @dataProvider fabricOverlapDataProvider
+     * @dataProvider strategy1DataProvider
      */
-    public function testFabricOverlap($data, $expected)
+    public function testStrategy1($data, $expected)
     {
-        $overlap = Day3::calculateOverlap($data);
+        $overlap = Day4::strategy1($data);
         $this->assertEquals($expected, $overlap);
     }
 
     /**
-     * @dataProvider fabricNoOverlapDataProvider
+     * @dataProvider strategy2DataProvider
      */
-    public function testNoFabricOverlap($data, $expected)
+    public function testStrategy2($data, $expected)
     {
-        $overlap = Day3::noOverlap($data);
+        $overlap = Day4::strategy2($data);
         $this->assertEquals($expected, $overlap);
     }
 
-    public function fabricDataProvider()
+    public function shiftDataProvider()
     {
         return [
             [
-                '#1 @ 1,3: 4x4',
-                ['id' => 1, 'left' => 1, 'top' => 3, 'wide' => 4, 'tall' => 4]
-            ],
-            [
-                '#2 @ 3,1: 4x4',
-                ['id' => 2, 'left' => 3, 'top' => 1, 'wide' => 4, 'tall' => 4]
-            ],
-            [
-                '#3 @ 5,5: 2x2',
-                ['id' => 3, 'left' => 5, 'top' => 5, 'wide' => 2, 'tall' => 2]
+                '[1518-11-01 00:00] Guard #10 begins shift',
+                [
+                    'id' => 10,
+                    'year' => 1518,
+                    'month' => 11,
+                    'day' => 1,
+                    'hour' => 0,
+                    'minute' => 0,
+                    'action' => 'begins shift'
+                ],
+                '[1518-11-01 00:05] falls asleep',
+                [
+                    'id' => 10,
+                    'year' => 1518,
+                    'month' => 11,
+                    'day' => 1,
+                    'hour' => 0,
+                    'minute' => 5,
+                    'action' => 'falls asleep'
+                ],
+                '[1518-11-01 00:25] wakes up',
+                [
+                    'id' => 10,
+                    'year' => 1518,
+                    'month' => 11,
+                    'day' => 1,
+                    'hour' => 0,
+                    'minute' => 25,
+                    'action' => 'wakes up'
+                ],
+                '[1518-11-01 00:30] falls asleep',
+                [
+                    'id' => 10,
+                    'year' => 1518,
+                    'month' => 11,
+                    'day' => 1,
+                    'hour' => 0,
+                    'minute' => 30,
+                    'action' => 'falls asleep'
+                ],
+                '[1518-11-01 00:55] wakes up',
+                [
+                    'id' => 10,
+                    'year' => 1518,
+                    'month' => 11,
+                    'day' => 1,
+                    'hour' => 0,
+                    'minute' => 55,
+                    'action' => 'wakes up'
+                ],
+
+                '[1518-11-01 23:58] Guard #99 begins shift',
+                [
+                    'id' => 99,
+                    'year' => 1518,
+                    'month' => 11,
+                    'day' => 1,
+                    'hour' => 23,
+                    'minute' => 58,
+                    'action' => 'begins shift'
+                ],
+                '[1518-11-02 00:40] falls asleep',
+                [
+                    'id' => 99,
+                    'year' => 1518,
+                    'month' => 11,
+                    'day' => 2,
+                    'hour' => 0,
+                    'minute' => 40,
+                    'action' => 'falls asleep'
+                ],
+                '[1518-11-02 00:50] wakes up',
+                [
+                    'id' => 99,
+                    'year' => 1518,
+                    'month' => 11,
+                    'day' => 2,
+                    'hour' => 0,
+                    'minute' => 50,
+                    'action' => 'wakes up'
+                ],
             ],
         ];
     }
 
-    public function fabricOverlapDataProvider()
+    public function strategy1DataProvider()
     {
         return [
             [
                 [
-                    '#1 @ 1,3: 4x4',
-                    '#2 @ 3,1: 4x4',
-                    '#3 @ 5,5: 2x2'
+                    '[1518-11-01 00:00] Guard #10 begins shift',
+                    '[1518-11-01 00:05] falls asleep',
+                    '[1518-11-01 00:25] wakes up',
+                    '[1518-11-01 00:30] falls asleep',
+                    '[1518-11-01 00:55] wakes up',
+                    '[1518-11-01 23:58] Guard #99 begins shift',
+                    '[1518-11-02 00:40] falls asleep',
+                    '[1518-11-02 00:50] wakes up',
+                    '[1518-11-03 00:05] Guard #10 begins shift',
+                    '[1518-11-03 00:24] falls asleep',
+                    '[1518-11-03 00:29] wakes up',
+                    '[1518-11-04 00:02] Guard #99 begins shift',
+                    '[1518-11-04 00:36] falls asleep',
+                    '[1518-11-04 00:46] wakes up',
+                    '[1518-11-05 00:03] Guard #99 begins shift',
+                    '[1518-11-05 00:45] falls asleep',
+                    '[1518-11-05 00:55] wakes up',
                 ],
-                4
+                240
             ]
         ];
     }
 
-    public function fabricNoOverlapDataProvider()
+    public function strategy2DataProvider()
     {
         return [
             [
                 [
-                    '#1 @ 1,3: 4x4',
-                    '#2 @ 3,1: 4x4',
-                    '#3 @ 5,5: 2x2'
+                    '[1518-11-01 00:00] Guard #10 begins shift',
+                    '[1518-11-01 00:05] falls asleep',
+                    '[1518-11-01 00:25] wakes up',
+                    '[1518-11-01 00:30] falls asleep',
+                    '[1518-11-01 00:55] wakes up',
+                    '[1518-11-01 23:58] Guard #99 begins shift',
+                    '[1518-11-02 00:40] falls asleep',
+                    '[1518-11-02 00:50] wakes up',
+                    '[1518-11-03 00:05] Guard #10 begins shift',
+                    '[1518-11-03 00:24] falls asleep',
+                    '[1518-11-03 00:29] wakes up',
+                    '[1518-11-04 00:02] Guard #99 begins shift',
+                    '[1518-11-04 00:36] falls asleep',
+                    '[1518-11-04 00:46] wakes up',
+                    '[1518-11-05 00:03] Guard #99 begins shift',
+                    '[1518-11-05 00:45] falls asleep',
+                    '[1518-11-05 00:55] wakes up',
                 ],
-                3
+                4455
             ]
         ];
     }
+
 }

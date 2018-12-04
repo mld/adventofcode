@@ -4,72 +4,143 @@ declare(strict_types=1);
 namespace App;
 
 
-class Day3
+class Day4
 {
-    public static function calculateOverlap($data)
-    {
-        $sheet = self::map($data);
+    static private $currentGuard = 0;
 
-        $overlap = 0;
-        foreach (array_keys($sheet) as $x) {
-            foreach (array_keys($sheet[$x]) as $y) {
-                if (count($sheet[$x][$y]) > 1) {
-                    $overlap++;
-                }
-            }
+    public static function strategy1($data)
+    {
+        $guards = [];
+
+        $schedule = self::getSchedule($data);
+
+        foreach (array_keys($schedule) as $guardId) {
+            $slept = array_sum($schedule[$guardId]);
+            arsort($schedule[$guardId], SORT_NUMERIC);
+            $minute = key($schedule[$guardId]);
+            $guards[$guardId] = [
+                'slept' => $slept,
+                'minute' => $minute
+            ];
         }
 
-        return $overlap;
+        uasort($guards, function ($a, $b) {
+            if ($a['slept'] == $b['slept']) {
+                return 0;
+            }
+            return ($a['slept'] > $b['slept']) ? -1 : 1;
+        });
+
+        $sleepyGuard = key($guards);
+
+        return $sleepyGuard * $guards[$sleepyGuard]['minute'];
     }
 
-    public static function map($data)
+    public static function strategy2($data)
     {
-        $sheet = [];
+        $guards = [];
 
-        foreach ($data as $cmd) {
-            $map = self::parse($cmd);
+        $schedule = self::getSchedule($data);
 
-            for ($x = $map['left']; $x < ($map['left'] + $map['wide']); $x++) {
-                for ($y = $map['top']; $y < ($map['top'] + $map['tall']); $y++) {
-                    $sheet[$x][$y][] = $map['id'];
-                }
-            }
+        foreach (array_keys($schedule) as $guardId) {
+            arsort($schedule[$guardId], SORT_NUMERIC);
+            $minute = key($schedule[$guardId]);
+            $guards[$guardId] = [
+                'slept' => $schedule[$guardId][$minute],
+                'minute' => $minute
+            ];
         }
 
-        return $sheet;
+        uasort($guards, function ($a, $b) {
+            if ($a['slept'] == $b['slept']) {
+                return 0;
+            }
+            return ($a['slept'] > $b['slept']) ? -1 : 1;
+        });
+
+        $sleepyGuard = key($guards);
+
+        return $sleepyGuard * $guards[$sleepyGuard]['minute'];
     }
 
     public static function parse($data)
     {
-        // '#1 @ 1,3: 4x4',
-        // ['id' => 1, 'left' => 1, 'top' => 3, 'wide' => 4, 'tall' => 4]
+//     '[1518-11-01 00:00] Guard #10 begins shift',
+//        [
+//            'id' => 10,
+//            'year' => 1518,
+//            'month' => 11,
+//            'day' => 1,
+//            'hour' => 0,
+//            'minute' => 0,
+//            'action' => 'begins shift'
+//        ],
+//        '[1518-11-01 00:05] falls asleep',
+//        [
+//            'id' => 10,
+//            'year' => 1518,
+//            'month' => 11,
+//            'day' => 1,
+//            'hour' => 0,
+//            'minute' => 5,
+//            'action' => 'falls asleep'
+//        ],
+//        '[1518-11-01 00:25] wakes up',
+//        [
+//            'id' => 10,
+//            'year' => 1518,
+//            'month' => 11,
+//            'day' => 1,
+//            'hour' => 0,
+//            'minute' => 25,
+//            'action' => 'wakes up'
+//        ],
 
-        list($id, $left, $top, $wide, $tall) = sscanf($data, '#%d @ %d,%d: %dx%d');
+        list($year, $month, $day, $hour, $minute, $event) = sscanf($data, '[%4d-%2d-%2d %2d:%2d] %[^$]s');
 
-        return ['id' => $id, 'left' => $left, 'top' => $top, 'wide' => $wide, 'tall' => $tall];
+        $id = self::$currentGuard;
+        $action = $event;
+
+        if (strpos($event, '#') !== false) {
+            list($id, $action) = sscanf($event, 'Guard #%d %[^$]s');
+            self::$currentGuard = $id;
+        }
+
+        return [
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'hour' => $hour,
+            'minute' => $minute,
+            'event' => $event,
+            'id' => $id,
+            'action' => $action,
+        ];
     }
 
-    public static function noOverlap($data)
+    protected static function getSchedule($data)
     {
-        $sheet = self::map($data);
-        $idMap = [];
+        $start = 0;
+        $currentGuard = 0;
+        $schedule = [];
 
-        foreach (array_keys($sheet) as $x) {
-            foreach (array_keys($sheet[$x]) as $y) {
-                foreach ($sheet[$x][$y] as $id) {
-                    $idMap['all'][$id] = 1;
-                    if (count($sheet[$x][$y]) > 1) {
-                        $idMap['remove'][$id] = 1;
+        sort($data);
+        foreach ($data as $row) {
+            $parsed = self::parse(trim($row));
+            switch ($parsed['action']) {
+                case 'begins shift':
+                    $currentGuard = $parsed['id'];
+                    break;
+                case 'falls asleep':
+                    $start = $parsed['minute'];
+                    break;
+                case 'wakes up':
+                    for ($n = $start; $n < $parsed['minute']; $n++) {
+                        $schedule[$currentGuard][$n] = isset($schedule[$currentGuard][$n]) ? $schedule[$currentGuard][$n] + 1 : 1;
                     }
-                }
+                    break;
             }
         }
-
-        foreach (array_keys($idMap['remove']) as $id) {
-            unset($idMap['all'][$id]);
-        }
-        $unique = array_flip($idMap['all']);
-
-        return array_shift($unique);
+        return $schedule;
     }
 }
