@@ -18,6 +18,25 @@ final class Day6Test extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+
+    public function testMaxDistance()
+    {
+        $data = [
+            "1, 1",
+            "1, 6",
+            "8, 3",
+            "3, 4",
+            "5, 5",
+            "8, 9",
+        ];
+        $maxDistance = 32;
+        $expected = 16;
+
+        $result = Day6::maxDistance($data, $maxDistance);
+
+        $this->assertEquals($expected, $result);
+    }
+
     /**
      * @dataProvider largestNotInfiniteProvider
      */
@@ -103,6 +122,26 @@ final class Day6Test extends TestCase
                     "8, 9",
                 ],
                 17,
+            ],
+        ];
+    }
+
+    public function maxDistanceProvider()
+    {
+        return [
+            [
+                [
+                    'data' => [
+                        "1, 1",
+                        "1, 6",
+                        "8, 3",
+                        "3, 4",
+                        "5, 5",
+                        "8, 9",
+                    ],
+                    'maxDistance' => 32,
+                ],
+                16,
             ],
         ];
     }
