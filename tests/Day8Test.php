@@ -13,12 +13,12 @@ final class Day8Test extends TestCase
     /**
      * @dataProvider rootSumProvider
      */
-    public function testRootSum($data, $expected)
-    {
-        $result = Day8::sum($data);
-
-        $this->assertEquals($expected, $result);
-    }
+//    public function testRootSum($data, $expected)
+//    {
+//        $result = Day8::sum($data);
+//
+//        $this->assertEquals($expected, $result);
+//    }
 
     /**
      * @dataProvider sumProvider

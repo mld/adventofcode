@@ -29,7 +29,7 @@ class Day7
                 if (!isset($initial[$parsed['before']])) {
                     $initial[$parsed['before']] = [];
                 }
-                $initial[$parsed['step']][] = $parsed['before'];
+                $initial[$parsed['before']][] = $parsed['step'];
             }
         }
 
@@ -39,7 +39,8 @@ class Day7
         foreach ($initial as $key => $keyRules) {
 //            echo "## " . __FUNCTION__ . ": expanding rules for $key\n";
 
-            $rules[$key] = self::expandRule($key, $initial);
+//            $rules[$key] = self::expandRule($key, $initial);
+            $rules[$key] = $initial[$key];
         }
 
         echo "\n\n" . __FUNCTION__ . ': initial: ' . "\n";
@@ -60,7 +61,7 @@ class Day7
                 echo "$char has no rules\n";
             } else {
                 sort($before);
-                echo "$char comes before " . join(', ', $before) . "\n";
+                echo "$char requires " . join(', ', $before) . "\n";
             }
         }
     }
@@ -88,12 +89,12 @@ class Day7
         echo "## Before: " . join('', array_keys($rules)) . "\n";
         uksort($rules, function ($a, $b) use ($rules) {
             if (in_array($b, $rules[$a])) {
-                echo "#### $a goes before $b\n";
-                return -1;
+                echo "#### $a requires $b\n";
+                return 1;
             }
             if (in_array($a, $rules[$b])) {
-                echo "#### $b goes before $a\n";
-                return 1;
+                echo "#### $b requires $a\n";
+                return -1;
             }
 
             $cmp = strcmp($a, $b);

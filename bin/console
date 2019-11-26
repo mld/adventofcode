@@ -21,6 +21,9 @@ $app->add(new \App\Command\Day5Part1Command());
 $app->add(new \App\Command\Day5Part2Command());
 $app->add(new \App\Command\Day6Part1Command());
 $app->add(new \App\Command\Day6Part2Command());
+$app->add(new \App\Command\Day6Part2Command());
+$app->add(new \App\Command\Day7Part1Command());
+$app->add(new \App\Command\Day8Part1Command());
 
 // And finally, execute
 $app->run();

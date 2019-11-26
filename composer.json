@@ -8,10 +8,10 @@
         }
     },
     "scripts": {
-        "test": "phpunit",
-        "check-style": "phpcs src tests",
-        "fix-style": "phpcbf src tests",
-        "phpstan": "phpstan analyse src/ --level 7"
+        "test": "vendor/bin/phpunit",
+        "check-style": "vendor/bin/phpcs src tests",
+        "fix-style": "vendor/bin/phpcbf src tests",
+        "phpstan": "vendor/bin/phpstan analyse src/ --level 7"
     },
     "require": {
         "php" : "~7.0",
