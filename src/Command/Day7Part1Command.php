@@ -49,7 +49,7 @@ class Day7Part1Command extends Command
         }
 
 //        $contents = join('',$contents);
-        $rules = \App\Day7::getRules($contents);
+        $rules = \App\Day7::getRules($contents, false, true);
         $order = \App\Day7::sortRules($rules);
 
         echo "### Rules:\n";

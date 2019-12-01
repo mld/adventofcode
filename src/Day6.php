@@ -50,20 +50,20 @@ class Day6
             }
         }
 
-        echo "\n\n\n########################################\n";
-        for ($y = $y1; $y < $y2; $y++) {
-            for ($x = $x1; $x < $x2; $x++) {
-                foreach ($vectors as $vectorId => $vector) {
-                    if ($vectorId == $map[$x][$y] && $x == $vector[0] && $y == $vector[1]) {
-                        echo '!';
-                        continue 2;
-                    }
-                }
-                echo $map[$x][$y];
-            }
-            echo "\n";
-        }
-        echo "\n########################################\n\n\n";
+//        echo "\n\n\n########################################\n";
+//        for ($y = $y1; $y < $y2; $y++) {
+//            for ($x = $x1; $x < $x2; $x++) {
+//                foreach ($vectors as $vectorId => $vector) {
+//                    if ($vectorId == $map[$x][$y] && $x == $vector[0] && $y == $vector[1]) {
+//                        echo '!';
+//                        continue 2;
+//                    }
+//                }
+//                echo $map[$x][$y];
+//            }
+//            echo "\n";
+//        }
+//        echo "\n########################################\n\n\n";
 
 //        echo "### " . __FUNCTION__ . ': top: ' . $y1 . ', bottom: ' . $y2 . "\n";
 //        echo "### " . __FUNCTION__ . ': left: ' . $x1 . ', right: ' . $x2 . "\n";
@@ -169,20 +169,20 @@ class Day6
             }
         }
 
-        echo "\n\n\n########################################\n";
-        for ($y = $y1; $y < $y2; $y++) {
-            for ($x = $x1; $x < $x2; $x++) {
-                foreach ($vectors as $vectorId => $vector) {
-                    if ($vectorId == $map[$x][$y] && $x == $vector[0] && $y == $vector[1]) {
-                        echo '!';
-                        continue 2;
-                    }
-                }
-                echo $map[$x][$y];
-            }
-            echo "\n";
-        }
-        echo "\n########################################\n\n\n";
+//        echo "\n\n\n########################################\n";
+//        for ($y = $y1; $y < $y2; $y++) {
+//            for ($x = $x1; $x < $x2; $x++) {
+//                foreach ($vectors as $vectorId => $vector) {
+//                    if ($vectorId == $map[$x][$y] && $x == $vector[0] && $y == $vector[1]) {
+//                        echo '!';
+//                        continue 2;
+//                    }
+//                }
+//                echo $map[$x][$y];
+//            }
+//            echo "\n";
+//        }
+//        echo "\n########################################\n\n\n";
 
 //        echo "### " . __FUNCTION__ . ': top: ' . $y1 . ', bottom: ' . $y2 . "\n";
 //        echo "### " . __FUNCTION__ . ': left: ' . $x1 . ', right: ' . $x2 . "\n";

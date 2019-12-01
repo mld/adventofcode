@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+//ini_set(‘memory_limit’,’512MB’);
+
+// Create application
+$app = new Symfony\Component\Console\Application('Advent of Code', '2018.0.1');
+
+// Load commands into application
+$app->add(new \App\Command\Day1Part1Command());
+$app->add(new \App\Command\Day1Part2Command());
+$app->add(new \App\Command\Day2Part1Command());
+$app->add(new \App\Command\Day2Part2Command());
+$app->add(new \App\Command\Day3Part1Command());
+$app->add(new \App\Command\Day3Part2Command());
+$app->add(new \App\Command\Day4Part1Command());
+$app->add(new \App\Command\Day4Part2Command());
+$app->add(new \App\Command\Day5Part1Command());
+$app->add(new \App\Command\Day5Part2Command());
+$app->add(new \App\Command\Day6Part1Command());
+$app->add(new \App\Command\Day6Part2Command());
+$app->add(new \App\Command\Day7Part1Command());
+
+// And finally, execute
+$app->run();
