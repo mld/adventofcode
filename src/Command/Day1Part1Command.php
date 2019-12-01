@@ -20,7 +20,7 @@ class Day1Part1Command extends Command
     protected function configure()
     {
         $this
-            ->setName('day1:frequency')
+            ->setName('day1:fuelCounterUpper')
             ->setDescription('Day 1 / part 1')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
@@ -46,7 +46,12 @@ class Day1Part1Command extends Command
             }
         }
 
-        $sum = Day1::getFrequency($contents);
+        $modules = [];
+        foreach ($contents as $row) {
+            $modules[] = new Day1\Module(['mass' => $row]);
+        }
+        $fcu = new Day1\FuelCounterUpper($modules);
+        $sum = $fcu->getFuelRequirement();
 
         $output->writeln('Sum: ' . $sum);
     }

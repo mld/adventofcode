@@ -8,8 +8,8 @@
 
 namespace App\Command;
 
-use App\Day1First;
 use App\Day1;
+use App\Day1First;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +20,7 @@ class Day1Part2Command extends Command
     protected function configure()
     {
         $this
-            ->setName('day1:duplicate')
+            ->setName('day1:fuelCounterUpperAdvanced')
             ->setDescription('Day 1 / part 2')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
@@ -46,9 +46,13 @@ class Day1Part2Command extends Command
             }
         }
 
+        $modules = [];
+        foreach ($contents as $row) {
+            $modules[] = new Day1\Module(['mass' => $row]);
+        }
+        $fcu = new Day1\FuelCounterUpper($modules);
+        $sum = $fcu->getFuelRequirement(false);
 
-        $result = Day1::getDuplicate($contents);
-
-        $output->writeln('Twice: ' . $result);
+        $output->writeln('Sum: ' . $sum);
     }
 }
