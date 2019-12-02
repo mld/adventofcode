@@ -8,9 +8,6 @@
 
 namespace App\Command;
 
-use App\Day1;
-use App\Day1First;
-use App\Day2;
 use App\Day7;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -49,13 +46,12 @@ class Day7Part1Command extends Command
         }
 
 //        $contents = join('',$contents);
-        $rules = \App\Day7::getRules($contents, false, true);
-        $order = \App\Day7::sortRules($rules);
+        $rules = Day7::getRules($contents);
+        $order = Day7::sortRules($rules);
 
         echo "### Rules:\n";
         Day7::printRules($rules);
 
         $output->writeln('Order: ' . $order);
-        $output->writeln('     : CFNRMLOKTAHWBPJSYZVGUQXIDE');
     }
 }

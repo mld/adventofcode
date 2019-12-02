@@ -13,7 +13,9 @@ final class Day7Test extends TestCase
      */
     public function testRules($data, $expected)
     {
-        $result = Day7::sortRules($data);
+        $rules = Day7::getRules($data);
+
+        $result = Day7::sortRules($rules);
 
         $this->assertEquals($expected, $result);
     }
@@ -23,13 +25,13 @@ final class Day7Test extends TestCase
         return [
             [
                 [
-                    "Step C must be finished before step A can begin.
-Step C must be finished before step F can begin.
-Step A must be finished before step B can begin.
-Step A must be finished before step D can begin.
-Step B must be finished before step E can begin.
-Step D must be finished before step E can begin.
-Step F must be finished before step E can begin.",
+                    "Step C must be finished before step A can begin.",
+                    "Step C must be finished before step F can begin.",
+                    "Step A must be finished before step B can begin.",
+                    "Step A must be finished before step D can begin.",
+                    "Step B must be finished before step E can begin.",
+                    "Step D must be finished before step E can begin.",
+                    "Step F must be finished before step E can begin.",
                 ],
                 "CABDFE",
             ],

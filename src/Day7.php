@@ -33,22 +33,15 @@ class Day7
             }
         }
 
-        echo "\n\n";
         $rules = [];
         // deeper rules...
         foreach ($initial as $key => $keyRules) {
-//            echo "## " . __FUNCTION__ . ": expanding rules for $key\n";
-
-//            $rules[$key] = self::expandRule($key, $initial);
             $rules[$key] = $initial[$key];
         }
 
-        echo "\n\n" . __FUNCTION__ . ': initial: ' . "\n";
-        self::printRules($initial);
-        echo "\n";
-        echo "\n\n" . __FUNCTION__ . ': final: ' . "\n";
-        self::printRules($rules);
-        echo "\n";
+//        echo "\n\n" . __FUNCTION__ . ': final: ' . "\n";
+//        self::printRules($rules);
+//        echo "\n";
 
         return $rules;
     }
@@ -66,51 +59,38 @@ class Day7
         }
     }
 
-    public static function expandRule($key, $rules, $in = [], $pre = '###')
-    {
-        if (!is_array($rules[$key]) || count($rules[$key]) == 0) {
-            return $in;
-        }
-
-//        echo $pre . " " . __FUNCTION__ . ": expanding $key: \n";
-
-        $result = $in;
-        foreach ($rules[$key] as $rule) {
-            $newRules = self::expandRule($rule, $rules, $rules[$key], $pre . '##');
-            $result = array_merge($newRules, $result);
-        }
-
-//        echo $pre . " " . __FUNCTION__ . ": $key rules expanded to " . join('', array_unique($result)) . "\n";
-        return array_unique($result);
-    }
-
     public static function sortRules($rules)
     {
-        echo "## Before: " . join('', array_keys($rules)) . "\n";
-        uksort($rules, function ($a, $b) use ($rules) {
-            if (in_array($b, $rules[$a])) {
-                echo "#### $a requires $b\n";
-                return 1;
-            }
-            if (in_array($a, $rules[$b])) {
-                echo "#### $b requires $a\n";
-                return -1;
-            }
+        $found = [];
+//        echo "## Before: " . join('', array_keys($rules)) . "\n";
 
-            $cmp = strcmp($a, $b);
-            if ($cmp < 0) {
-                echo "#### $a goes before $b (by alphabet)\n";
-            } elseif ($cmp > 0) {
-                echo "#### $b goes before $a (by alphabet)\n";
-            } else {
-                echo "#### Undefined $cmp för $a/$b (by alphabet)\n";
+        ksort($rules);
+        reset($rules);
+
+        do {
+            $pos = key($rules);
+
+            if(count($rules[$pos]) == 0) {
+                // no rule for this match
+                unset($rules[$pos]);
+                $found[] = $pos;
+                reset($rules);
+                continue;
             }
 
-            return $cmp;
-        });
+            if(count(array_intersect($rules[$pos],$found)) == count($rules[$pos])) {
+                // all rules fulfilled for this match
+                unset($rules[$pos]);
+                $found[] = $pos;
+                reset($rules);
+                continue;
+            }
 
-        echo "## After: " . join('', array_keys($rules)) . "\n";
+            next($rules);
+        } while (count($rules) > 0);
 
-        return join('', array_keys($rules));
+//        echo "## After: " . join('', $found) . "\n";
+
+        return join('', $found);
     }
 }
