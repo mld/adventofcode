@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Day2;
+namespace App\Day02;
 
 
 class StateMachine

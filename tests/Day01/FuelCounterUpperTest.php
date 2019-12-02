@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Day1;
 
-use App\Day1;
+use App\Day01;
 use PHPUnit\Framework\TestCase;
 
 final class FuelCounterUpperTest extends TestCase
@@ -21,10 +21,10 @@ final class FuelCounterUpperTest extends TestCase
         $modules = [];
 
         foreach ($moduleMass as $mass) {
-            $modules[] = new Day1\Module(['mass' => $mass]);
+            $modules[] = new Day01\Module(['mass' => $mass]);
         }
 
-        $fuelCounterUpper = new Day1\FuelCounterUpper($modules);
+        $fuelCounterUpper = new Day01\FuelCounterUpper($modules);
         $sumSimple = $fuelCounterUpper->getFuelRequirement(true);
         $sumComplex = $fuelCounterUpper->getFuelRequirement(false);
         $this->assertEquals($expected[0], $sumSimple);

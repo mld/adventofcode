@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Day1;
+namespace App\Tests\Day01;
 
-use App\Day1;
+use App\Day01;
 use PHPUnit\Framework\TestCase;
 
 final class ModuleTest extends TestCase
@@ -14,7 +14,7 @@ final class ModuleTest extends TestCase
      */
     public function testMassFuel($mass, $expected)
     {
-        $module = new Day1\Module(['mass' => $mass]);
+        $module = new Day01\Module(['mass' => $mass]);
         $this->assertEquals($expected[0], $module->requiredFuel());
         $this->assertEquals($expected[1], $module->requiredFuel(false));
     }

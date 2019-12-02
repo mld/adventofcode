@@ -56,7 +56,7 @@ class Day2Part1Command extends Command
         $data[1] = 12;
         $data[2] = 2;
 
-        $m = new StateMachine($data);
+        $m = new \App\Day02\StateMachine($data);
         $sum = $m->run();
 
         $output->writeln('Sum: ' . $sum);

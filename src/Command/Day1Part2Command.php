@@ -8,6 +8,8 @@
 
 namespace App\Command;
 
+use App\Day01\FuelCounterUpper;
+use App\Day01\Module;
 use App\Day1;
 use App\Day1First;
 use Symfony\Component\Console\Command\Command;
@@ -48,9 +50,9 @@ class Day1Part2Command extends Command
 
         $modules = [];
         foreach ($contents as $row) {
-            $modules[] = new Day1\Module(['mass' => $row]);
+            $modules[] = new Module(['mass' => $row]);
         }
-        $fcu = new Day1\FuelCounterUpper($modules);
+        $fcu = new FuelCounterUpper($modules);
         $sum = $fcu->getFuelRequirement(false);
 
         $output->writeln('Sum: ' . $sum);

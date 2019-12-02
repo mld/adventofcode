@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Day1;
+namespace App\Day01;
 
 class Module
 {

@@ -60,7 +60,7 @@ class Day2Part2Command extends Command
                 $data = $dataOrig;
                 $data[1] = $noun;
                 $data[2] = $verb;
-                $m = new StateMachine($data);
+                $m = new \App\Day02\StateMachine($data);
                 $sum = $m->run();
 
                 if ($sum == 19690720) {

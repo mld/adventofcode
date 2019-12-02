@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Day2;
+namespace App\Tests\Day02;
 
-use App\Day2\StateMachine;
 use PHPUnit\Framework\TestCase;
 
 final class ModuleTest extends TestCase
@@ -16,7 +15,7 @@ final class ModuleTest extends TestCase
      */
     public function testStateMachine($steps, $expected)
     {
-        $m = new StateMachine($steps);
+        $m = new \App\Day02\StateMachine($steps);
         $this->assertEquals($expected, $m->run());
     }
 
