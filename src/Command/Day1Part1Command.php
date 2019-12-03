@@ -12,12 +12,11 @@ use App\Day01\FuelCounterUpper;
 use App\Day01\Module;
 use App\Day1;
 use App\Day1First;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Day1Part1Command extends Command
+class Day1Part1Command extends FileInputCommand
 {
     protected function configure()
     {
@@ -30,23 +29,7 @@ class Day1Part1Command extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $contents = [];
-        if ($filenames = $input->getArgument('filename')) {
-            if (!is_array($filenames)) {
-                $filenames = [$filenames];
-            }
-            foreach ($filenames as $filename) {
-                $contents = file($filename);
-            }
-        } else {
-            if (0 === ftell(STDIN)) {
-                while ($row = fgets(STDIN)) {
-                    $contents[] = trim($row);
-                }
-            } else {
-                throw new \RuntimeException("Please provide a filename or pipe content to STDIN.");
-            }
-        }
+        $contents = $this->parseFiles($input->getArgument('filename'));
 
         $modules = [];
         foreach ($contents as $row) {
