@@ -1,9 +1,8 @@
 #!/usr/bin/env php
 <?php
+//  -d memory_limit=512M
 
 require __DIR__ . '/../vendor/autoload.php';
-
-//ini_set(‘memory_limit’,’512MB’);
 
 // Create application
 $app = new Symfony\Component\Console\Application('Advent of Code', '2019.0.1');
@@ -13,6 +12,8 @@ $app->add(new \App\Command\Day1Part1Command());
 $app->add(new \App\Command\Day1Part2Command());
 $app->add(new \App\Command\Day2Part1Command());
 $app->add(new \App\Command\Day2Part2Command());
+$app->add(new \App\Command\Day3Part1Command());
+$app->add(new \App\Command\Day3Part2Command());
 
 // And finally, execute
 $app->run();
