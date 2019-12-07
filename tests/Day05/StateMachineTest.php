@@ -5,7 +5,7 @@ namespace App\Tests\Day05;
 
 use PHPUnit\Framework\TestCase;
 
-final class ModuleTest extends TestCase
+final class StateMachineTest extends TestCase
 {
 
     /**

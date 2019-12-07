@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/env php -d memory_limit=512M
 <?php
 //  -d memory_limit=512M
 
@@ -20,6 +20,10 @@ $app->add(new C\Day4Part1Command());
 $app->add(new C\Day4Part2Command());
 $app->add(new C\Day5Part1Command());
 $app->add(new C\Day5Part2Command());
+$app->add(new C\Day6Part1Command());
+$app->add(new C\Day6Part2Command());
+$app->add(new C\Day7Part1Command());
+$app->add(new C\Day7Part2Command());
 
 // And finally, execute
 try {

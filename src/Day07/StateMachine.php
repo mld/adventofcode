@@ -1,34 +1,42 @@
 <?php
 
 
-namespace App\Day05;
+namespace App\Day07;
 
 
 class StateMachine
 {
+    protected $currentStep;
     protected $steps;
     protected $debug;
+    protected $input;
+    protected $terminated;
+    protected $output;
 
     public function __construct($steps = [], $debug = false)
     {
+        $this->currentStep = 0;
         $this->debug = $debug;
         $this->steps = $steps;
+        $this->input = [];
+        $this->terminated = false;
+        $this->output = null;
     }
 
-    public function run($input)
+    public function run($input = [])
     {
-        if (count($this->steps) == 0) {
-            return -1;
-        }
-
+        // Handle input
         if (!is_array($input)) {
-            $input = [$input];
+            $this->input[] = $input;
+
+        } else {
+            foreach ($input as $item) {
+                $this->input[] = $item;
+            }
         }
 
-        $step = 0;
-        $output = null;
-        do {
-            $instruction = sprintf("%05d", $this->steps[$step]);
+        while (!$this->isTerminated()) {
+            $instruction = sprintf("%05d", $this->steps[$this->currentStep]);
             $parts = str_split($instruction);
 
             $opcode = intval($parts[3] . $parts[4]);
@@ -36,12 +44,13 @@ class StateMachine
 
             $arg = [];
             for ($n = 0; $n < 3; $n++) {
-                $arg[$n]['position'] = $this->steps[$this->steps[$step + $n + 1]];
-                $arg[$n]['direct'] = $this->steps[$step + $n + 1];
+                $arg[$n]['position'] = $this->steps[$this->steps[$this->currentStep + $n + 1]];
+                $arg[$n]['direct'] = $this->steps[$this->currentStep + $n + 1];
                 $arg[$n]['byMode'] = $modes[$n] == 0 ? $arg[$n]['position'] : $arg[$n]['direct'];
             }
             if ($this->debug) {
-                printf("Instruction: %s, Step %d: Opcode: %02d, Modes: %d,%d,%d\n", $instruction, $step, $opcode,
+                printf("Instruction: %s, Step %d: Opcode: %02d, Modes: %d,%d,%d\n", $instruction, $this->currentStep,
+                    $opcode,
                     $modes[0], $modes[1], $modes[2]);
             }
             switch ($opcode) {
@@ -52,10 +61,10 @@ class StateMachine
                     $pos = $arg[2]['direct'];
 
                     if ($this->debug) {
-                        printf("Step %d: Add %d to %d and store it at place %d\n", $step, $a, $b, $pos);
+                        printf("Step %d: Add %d to %d and store it at place %d\n", $this->currentStep, $a, $b, $pos);
                     }
                     $this->steps[$pos] = $a + $b;
-                    $step += 4;
+                    $this->currentStep += 4;
                     break;
 
                 case 2:
@@ -64,29 +73,34 @@ class StateMachine
                     $b = $arg[1]['byMode'];
                     $pos = $arg[2]['direct'];
                     if ($this->debug) {
-                        printf("Step %d: Multiply %d with %d and store it at place %d\n", $step, $a, $b, $pos);
+                        printf("Step %d: Multiply %d with %d and store it at place %d\n", $this->currentStep, $a, $b,
+                            $pos);
                     }
                     $this->steps[$pos] = $a * $b;
-                    $step += 4;
+                    $this->currentStep += 4;
                     break;
                 case 3:
                     // Save input - ignore mode
                     $pos = $arg[0]['direct'];
-                    $inp = array_shift($input);
+                    $inp = array_shift($this->input);
                     if ($this->debug) {
-                        printf("Step %d: Take input %d and store it at place %d\n", $step, $inp, $pos);
+                        printf("Step %d: Take input %d and store it at place %d\n", $this->currentStep, $inp, $pos);
                     }
                     $this->steps[$pos] = $inp;
-                    $step += 2;
+                    $this->currentStep += 2;
                     break;
                 case 4:
                     // Save output - ignore mode?
                     $pos = $arg[0]['direct'];
                     if ($this->debug) {
-                        printf("Step %d: Save place %d as output %d\n", $step, $pos, $this->steps[$pos]);
+                        $nextInstruction = sprintf("%05d", $this->steps[$this->currentStep + 2]);
+                        printf("Step %d: Save place %d as output %d, cur: %s, next: %s\n", $this->currentStep, $pos,
+                            $this->steps[$pos], $instruction, $nextInstruction);
                     }
-                    $output = $this->steps[$pos];
-                    $step += 2;
+                    $this->output = $this->steps[$pos];
+                    $this->currentStep += 2;
+
+                    return $this->output;
                     break;
                 case 5:
                     // Opcode 5 is jump-if-true: if the first parameter is non-zero, it sets the instruction pointer to
@@ -94,13 +108,14 @@ class StateMachine
                     $a = $arg[0]['byMode'];
                     $pos = $arg[1]['byMode'];
                     if ($this->debug) {
-                        printf("Step %d: Set pointer to %d if %d (step %d) is non-zero\n", $step, $pos, $a,
+                        printf("Step %d: Set pointer to %d if %d (currentStep %d) is non-zero\n", $this->currentStep,
+                            $pos, $a,
                             $arg[0]['direct']);
                     }
                     if ($a != 0) {
-                        $step = $pos;
+                        $this->currentStep = $pos;
                     } else {
-                        $step += 3;
+                        $this->currentStep += 3;
                     }
                     break;
                 case 6:
@@ -110,12 +125,12 @@ class StateMachine
                     $pos = $arg[1]['byMode'];
 
                     if ($this->debug) {
-                        printf("Step %d: Set pointer to %d if %d is zero\n", $step, $pos, $a);
+                        printf("Step %d: Set pointer to %d if %d is zero\n", $this->currentStep, $pos, $a);
                     }
                     if ($a == 0) {
-                        $step = $pos;
+                        $this->currentStep = $pos;
                     } else {
-                        $step += 3;
+                        $this->currentStep += 3;
                     }
 
                     break;
@@ -127,14 +142,15 @@ class StateMachine
                     $pos = $arg[2]['direct'];
 
                     if ($this->debug) {
-                        printf("Step %d: If %d is less than %d, %d is set to 1, otherwise 0\n", $step, $a, $b, $pos);
+                        printf("Step %d: If %d is less than %d, %d is set to 1, otherwise 0\n", $this->currentStep, $a,
+                            $b, $pos);
                     }
                     if ($a < $b) {
                         $this->steps[$pos] = 1;
                     } else {
                         $this->steps[$pos] = 0;
                     }
-                    $step += 4;
+                    $this->currentStep += 4;
 
                     break;
                 case 8:
@@ -145,29 +161,50 @@ class StateMachine
                     $pos = $arg[2]['direct'];
 
                     if ($this->debug) {
-                        printf("Step %d: If %d is equal to %d, %d is set to 1, otherwise 0\n", $step, $a, $b, $pos);
+                        printf("Step %d: If %d is equal to %d, %d is set to 1, otherwise 0\n", $this->currentStep, $a,
+                            $b, $pos);
                     }
                     if ($a == $b) {
                         $this->steps[$pos] = 1;
                     } else {
                         $this->steps[$pos] = 0;
                     }
-                    $step += 4;
+                    $this->currentStep += 4;
                     break;
+
                 default:
                     // End of program, but we never should get here...
                     if ($this->debug) {
-                        printf("This never happens...\n");
+                        printf("Step %d: This never happens...\n", $this->currentStep);
                     }
                     break;
             }
-        } while ($this->steps[$step] != 99);
-
-        if ($this->debug) {
-            printf("Run ended with %d, output %d\n", $this->steps[0], $output);
         }
 
-        return $output;
+        if ($this->debug) {
+            printf("Run ended with %d, output %d\n", $this->steps[0], $this->output);
+        }
+
+        return $this->output;
     }
 
+    /**
+     * @return bool
+     */
+    public function isTerminated(): bool
+    {
+        $instruction = sprintf("%05d", $this->steps[$this->currentStep]);
+        $parts = str_split($instruction);
+
+        $opcode = intval($parts[3] . $parts[4]);
+        return $opcode == 99;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOutput()
+    {
+        return $this->output;
+    }
 }
