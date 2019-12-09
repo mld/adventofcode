@@ -10,20 +10,12 @@ require __DIR__ . '/../vendor/autoload.php';
 $app = new Symfony\Component\Console\Application('Advent of Code', '2019.0.1');
 
 // Load commands into application
-$app->add(new C\Day1Part1Command());
-$app->add(new C\Day1Part2Command());
-$app->add(new C\Day2Part1Command());
-$app->add(new C\Day2Part2Command());
-$app->add(new C\Day3Part1Command());
-$app->add(new C\Day3Part2Command());
-$app->add(new C\Day4Part1Command());
-$app->add(new C\Day4Part2Command());
-$app->add(new C\Day5Part1Command());
-$app->add(new C\Day5Part2Command());
-$app->add(new C\Day6Part1Command());
-$app->add(new C\Day6Part2Command());
-$app->add(new C\Day7Part1Command());
-$app->add(new C\Day7Part2Command());
+foreach (glob(__DIR__ . '/../src/Command/Day*.php') as $file) {
+    $class = sprintf("\App\Command\%s", basename($file, '.php'));
+    if (class_exists($class)) {
+        $app->add(new $class);
+    }
+}
 
 // And finally, execute
 try {
