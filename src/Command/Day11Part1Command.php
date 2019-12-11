@@ -35,5 +35,9 @@ class Day11Part1Command extends FileInputCommand
             "Painted panels: %d",
             $out
         ));
+
+        // 1256 too low
+        // 2610 too high
+        // 1313 not right
     }
 }
