@@ -1,67 +1,85 @@
 <?php
 
 
-namespace App\Day17;
+namespace App\Day19;
 
 
 use App\Day13\Computer;
+use App\Day15\Point;
 
 class TractorBeam
 {
     protected $code;
+    protected $map;
     protected $debug;
     protected $height;
+    protected $width;
 
 
     public function __construct($code = '99', $height = 10, $width = 10, $debug = false)
     {
         $this->code = $code;
         $this->debug = $debug;
+        $this->height = $height;
+        $this->width = $width;
     }
 
-    public function beam()
+    protected function check($x, $y)
     {
         $code = $this->code;
-        $code[0] = 2; // wake up the robot
-
-        $commands = [
-            0 => str_split('A,B,B,C,B,C,B,C,A,A' . chr(10)), // Main routine
-            1 => str_split('L,6,R,8,L,4,R,8,L,12' . chr(10)), // Function A
-            2 => str_split('L,12,R,10,L,4' . chr(10)), // Function B
-            3 => str_split('L,12,L,6,L,4,L,4' . chr(10)), // Function C
-            4 => str_split('n' . chr(10)), // Video feed
-        ];
-        $command = 0;
-        $pos = 0;
-
         $computer = new Computer($code, true, false);
-        $last = null;
-        do {
-            if ($computer->pauseReason == 'output') {
-                if (chr($computer->output) == '.') {
-                    printf(" ");
-                } else {
-                    printf("%c", $computer->output);
-                }
-                $computer->run();
-
-            }
-            if ($computer->pauseReason == 'input') {
-                $computer->input(ord($commands[$command][$pos]));
-                if (ord($commands[$command][$pos]) == 10) {
-                    $command++;
-                    $pos = 0;
-                } else {
-                    $pos++;
-                }
-            }
-        } while ($computer->running || $command <= 3);
-
+        $computer->input($x);
+        $computer->input($y);
+        if ($this->debug) {
+            printf("%s: output: %s\n", new Point($x, $y), $computer->output);
+        }
         return $computer->output;
     }
 
-    public function printMap($map)
+    public function scan()
     {
+        $x = 0;
+        $y = 0;
+        $beamSize = 0;
+        do {
+            $out = $this->check($x, $y);
+
+            if ($out == 1) {
+                $beamSize++;
+            }
+            $this->map[$x][$y] = $out;
+
+            $x++;
+            if ($x == $this->width) {
+                $x = 0;
+                $y++;
+            }
+
+        } while ($y < $this->width);
+
+        return $beamSize;
+    }
+
+    public function range($height, $width)
+    {
+        // Find the range where the beam fits around an object with arguments as height and width
+        $x = 0;
+        $y = 0;
+        while ($this->check($x + $width - 1, $y) == 0) {
+            $y++;
+            if ($this->check($x, $y + $height - 1) == 0) {
+                $x++;
+            }
+        }
+
+        return new Point($x, $y);
+    }
+
+    public function printField($map = null)
+    {
+        if ($map == null) {
+            $map = $this->map;
+        }
         $minX = PHP_INT_MAX;
         $maxX = PHP_INT_MIN;
         $minY = min(array_keys($map));
@@ -85,7 +103,7 @@ class TractorBeam
             if (!$header) {
                 printf("%3d: ", $y);
             } else {
-                printf("     ");
+                printf("  ");
             }
             for ($x = $minX - 1; $x <= $maxX + 1; $x++) {
                 if ($header) {
@@ -97,7 +115,9 @@ class TractorBeam
                         case '.':
                             printf($xFormat, ' ');
                             break;
-
+                        case 1:
+                            printf($xFormat, '#');
+                            break;
                         case '#':
                         default:
                             printf($xFormat, trim($map[$y][$x]));
