@@ -6,7 +6,7 @@ namespace App\Day13;
 class Computer
 {
     private $debug;
-    private $debug_id;
+    private $debugId;
     private $opcodes;
     private $counter;
 
@@ -15,17 +15,17 @@ class Computer
     private $address;
     private $values;
     private $modes;
-    private $addr_input;
-    private $addr_relative;
-    private $auto_input;
+    private $addressInput;
+    private $addressRelative;
+    private $autoInput;
     public $output;
     public $pauseReason;
     public $running;
 
-    public function __construct($codetext = '99', $autostart = true, $debug = true, $debug_id = 0)
+    public function __construct($codetext = '99', $autostart = true, $debug = true, $debugId = 0)
     {
         $this->debug = $debug; // set to true to see output on screen
-        $this->debug_id = $debug_id;
+        $this->debugId = $debugId;
         $this->opcodes = [
             1 => ['label' => 'add', 'count' => 3],
             2 => ['label' => 'mul', 'count' => 3],
@@ -41,9 +41,9 @@ class Computer
         $this->values = [0, 0, 0];
         $this->address = [0, 0, 0];
         $this->modes = [0, 0, 0]; // 0=address, 1=immediate, 2=relative
-        $this->addr_input = -1;
+        $this->addressInput = -1;
         $this->counter = 0;
-        $this->addr_relative = 0;
+        $this->addressRelative = 0;
         $this->running = false;
         $this->pauseReason = ''; // pause on input, output, future (which will show up here)
 
@@ -66,15 +66,15 @@ class Computer
     public function setAutoInput($f)
     {
         if (is_callable($f)) {
-            $this->auto_input = $f;
+            $this->autoInput = $f;
         }
     }
 
     public function input($value)
     {
-        $this->code[$this->addr_input] = $value;
+        $this->code[$this->addressInput] = $value;
         if ($this->debug == true) {
-            echo ' ' . str_pad($this->addr_input, 2, ' ', STR_PAD_LEFT) . ' INPUT ' . $value;
+            echo ' ' . str_pad($this->addressInput, 2, ' ', STR_PAD_LEFT) . ' INPUT ' . $value;
         }
         $this->run();
     }
@@ -87,7 +87,7 @@ class Computer
         $continue = true;
         $this->running = true;
         while ($continue == true) {
-            $this->decode_opcode();
+            $this->decodeOpcode();
             $log = '';
             if (($this->opcode == 1) || ($this->opcode == 2)) { // add or mul
                 $a = $this->values[0];
@@ -102,16 +102,16 @@ class Computer
                 $log = ' c= ' . $c;
             }
             if ($this->opcode == 3) {  // input (memorize address and pause, input value from main program)
-                if (is_callable($this->auto_input)) {
+                if (is_callable($this->autoInput)) {
                     // If auto_input is a function, use that for input
-                    $value = ($this->auto_input)();
-                    $this->code[$this->addr_input] = $value;
+                    $value = ($this->autoInput)();
+                    $this->code[$this->addressInput] = $value;
                     if ($this->debug == true) {
-                        echo ' ' . str_pad($this->addr_input, 2, ' ', STR_PAD_LEFT) . ' INPUT ' . $value;
+                        echo ' ' . str_pad($this->addressInput, 2, ' ', STR_PAD_LEFT) . ' INPUT ' . $value;
                     }
                 } else {
                     $this->pauseReason = 'input';
-                    $this->addr_input = $this->address[0];
+                    $this->addressInput = $this->address[0];
                     $continue = false;
                 }
             }
@@ -144,8 +144,8 @@ class Computer
                 $log = ' JEQ, ' . $c . ' -> ' . $this->address[2];
             }
             if ($this->opcode == 9) { // adjust relative address
-                $this->addr_relative += $this->values[0];
-                $log = ' REL = ' . $this->addr_relative;
+                $this->addressRelative += $this->values[0];
+                $log = ' REL = ' . $this->addressRelative;
             }
             if ($this->opcode == 99) {
                 $log = " EXIT\n";
@@ -158,12 +158,12 @@ class Computer
         }
     }
 
-    private function get_value($address)
+    private function getValue($address)
     {
         return (isset($this->code[$address]) == true) ? $this->code[$address] : 0;
     }
 
-    private function get_counter_value($autoincrement = true)
+    private function getCounterValue($autoincrement = true)
     {
         $value = (isset($this->code[$this->counter]) == true) ? $this->code[$this->counter] : 0;
         if ($autoincrement == true) {
@@ -172,9 +172,9 @@ class Computer
         return $value;
     }
 
-    private function decode_opcode()
+    private function decodeOpcode()
     {
-        $this->opcode = $this->get_counter_value();
+        $this->opcode = $this->getCounterValue();
         if ($this->opcode < 0) {
             die("Invalid opcode encountered at address " . ($this->counter - 1) . ": $this->opcode");
         }
@@ -197,21 +197,21 @@ class Computer
 
         for ($i = 0; $i < $this->opcodes[$this->opcode]['count']; $i++) {
             $this->modes[$i] = ord(substr($temp, 2 - $i, 1)) - 0x30;
-            $value = $this->get_counter_value(); // auto increments counter
+            $value = $this->getCounterValue(); // auto increments counter
             if ($this->modes[$i] == 1) {
                 $this->values[$i] = $value;
             }
             if ($this->modes[$i] == 0) {
                 $this->address[$i] = $value;
-                $this->values[$i] = $this->get_value($this->address[$i]);
+                $this->values[$i] = $this->getValue($this->address[$i]);
             }
             if ($this->modes[$i] == 2) {
-                $this->address[$i] = $this->addr_relative + $value;
-                $this->values[$i] = $this->get_value($this->address[$i]);
+                $this->address[$i] = $this->addressRelative + $value;
+                $this->values[$i] = $this->getValue($this->address[$i]);
             }
         }
         if ($this->debug == true) {
-            echo "\n" . str_pad($this->debug_id, 2, ' ', STR_PAD_LEFT) . ' ' .
+            echo "\n" . str_pad($this->debugId, 2, ' ', STR_PAD_LEFT) . ' ' .
                 str_pad($this->counter, 6, ' ', STR_PAD_LEFT) . ' ' .
                 str_pad($this->opcode, 2, ' ', STR_PAD_LEFT) . ' ' .
                 str_pad($this->opcodes[$this->opcode]['label'], 6, ' ', STR_PAD_LEFT) . ' ' .
