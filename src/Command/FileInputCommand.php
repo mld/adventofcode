@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 
 abstract class FileInputCommand extends Command
 {
-    protected function parseFiles($filenames = null)
+    protected function parseFiles($filenames = null, $trimMask = " \t\n\r\0\x0B")
     {
         $contents = [];
         if ($filenames !== null) {
@@ -21,7 +21,7 @@ abstract class FileInputCommand extends Command
         } else {
             if (0 === ftell(STDIN)) {
                 while ($row = fgets(STDIN)) {
-                    $contents[] = trim($row);
+                    $contents[] = trim($row, $trimMask);
                 }
             } else {
                 throw new \RuntimeException("Please provide one or more filenames or pipe content to STDIN.");
