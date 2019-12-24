@@ -13,14 +13,17 @@ class NIC
     protected $computer;
     protected $input;
     protected $output;
+    protected $idle;
 
-    public function __construct($code = '99', $debug = false)
+    public function __construct($address = 0, $code = '99', $debug = false)
     {
         $this->code = $code;
         $this->debug = $debug;
         $this->input = [];
         $this->output = [];
         $this->computer = new Computer($this->code, true, $debug);
+        $this->computer->input($address);
+        $this->idle = 0;
     }
 
     public function run(): void
@@ -43,9 +46,14 @@ class NIC
             $item = array_shift($this->input);
             if ($item == null) {
                 $this->computer->input(-1);
+                $this->idle++;
+            } elseif (!is_array($item)) {
+                $this->computer->input($item); // x
+                $this->idle = 0;
             } else {
                 $this->computer->input($item[0]); // x
                 $this->computer->input($item[1]); // y
+                $this->idle = 0;
             }
             return;
         }
@@ -65,8 +73,11 @@ class NIC
         return;
     }
 
-    public function input($x, $y)
+    public function input($x, $y = null)
     {
+        if ($y === null) {
+            return array_push($this->input, $x);
+        }
         return array_push($this->input, [$x, $y]);
     }
 
@@ -75,4 +86,8 @@ class NIC
         return array_shift($this->output);
     }
 
+    public function idle()
+    {
+        return ($this->idle > 1);
+    }
 }

@@ -7,13 +7,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Day23Part1Command extends FileInputCommand
+class Day23Part2Command extends FileInputCommand
 {
     protected function configure()
     {
         $this
-            ->setName('day23:y255')
-            ->setDescription('Day 23 / part 1')
+            ->setName('day23:nat')
+            ->setDescription('Day 23 / part 2')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
     }
@@ -31,11 +31,12 @@ class Day23Part1Command extends FileInputCommand
         $net = new Network($data,50,false);
 
         $out = 'oops!';
-        $out = $net->findYTo255();
+        $out = $net->nat();
 
         $output->writeln("");
         $output->writeln(sprintf(
-            "First Y to 255: %s",var_export($out,true)
+            "First double Y from 255: %s",var_export($out,true)
         ));
     }
+    // 19643 too high
 }
