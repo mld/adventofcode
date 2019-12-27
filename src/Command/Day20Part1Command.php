@@ -2,29 +2,34 @@
 
 namespace App\Command;
 
-use App\Day19\TractorBeam;
+use App\Day20\PortalMaze;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Day19Part1Command extends FileInputCommand
+class Day20Part1Command extends FileInputCommand
 {
     protected function configure()
     {
         $this
-            ->setName('day19:scan')
-            ->setDescription('Day 19 / part 1')
+            ->setName('day20:steps')
+            ->setDescription('Day 20 / part 1')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $contents = $this->parseFiles($input->getArgument('filename'));
+        $contents = $this->parseFiles($input->getArgument('filename'),"\n\r");
 
-        $beam = new TractorBeam($contents[0], 50, 50);
-        $out = $beam->scan();
-        $beam->printField();
-        $output->writeln('Out: ' . $out);
+        $maze = new PortalMaze($contents, true);
+        $maze->parseMaze();
+        $map = [];
+        $stepMap = [];
+        $steps = $maze->shortestPathToExit($map,null,1,$stepMap);
+//        $out = $beam->scan();
+//        $beam->printField();
+        $maze->printMap($map,$stepMap);
+        $output->writeln('Out: ' . $steps);
     }
 }
