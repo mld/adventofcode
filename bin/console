@@ -1,0 +1,33 @@
+#!/usr/bin/env php -d memory_limit=512M
+<?php
+//  -d memory_limit=512M
+
+use App\Command as C;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+// Create application
+$app = new Symfony\Component\Console\Application('Advent of Code', '2019.0.1');
+
+// Load commands into application
+foreach (glob(__DIR__ . '/../src/Command/Day*.php') as $file) {
+    $class = sprintf("\App\Command\%s", basename($file, '.php'));
+    if (class_exists($class)) {
+        $app->add(new $class);
+    }
+}
+
+// And finally, execute
+try {
+    $app->run();
+} catch (Exception $exception) {
+    printf(
+        "Caught exception on %s:%d: [%d] %s\n",
+        $exception->getFile(),
+        $exception->getLine(),
+        $exception->getCode(),
+        $exception->getMessage()
+    );
+    exit(1);
+}
+exit(0);
