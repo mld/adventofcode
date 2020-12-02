@@ -7,17 +7,17 @@ namespace App\Day15;
 class Point extends \App\Day10\Point
 {
 
-    public static function moveInDirection(Point $point, int $direction): Point
+    public static function moveInDirection(Point $point, int $direction, $reversedYAxis = false): Point
     {
         $x = $point->x;
         $y = $point->y;
 
         switch ($direction) {
             case 1: // north
-                $y++;
+                $y += $reversedYAxis ? 1 : -1;
                 break;
             case 2: // south
-                $y--;
+                $y += $reversedYAxis ? -1 : 1;
                 break;
             case 3: // west
                 $x--;

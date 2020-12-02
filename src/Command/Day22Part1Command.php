@@ -2,18 +2,18 @@
 
 namespace App\Command;
 
-use App\Day21\SpringDroid;
+use App\Day22\Stack;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Day21Part2Command extends FileInputCommand
+class Day22Part1Command extends FileInputCommand
 {
     protected function configure()
     {
         $this
-            ->setName('day21:run')
-            ->setDescription('Day 21 / part 2')
+            ->setName('day22:shuffle')
+            ->setDescription('Day 22 / part 1')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
     }
@@ -22,19 +22,20 @@ class Day21Part2Command extends FileInputCommand
     {
         $contents = $this->parseFiles($input->getArgument('filename'));
 
-        $data = [];
-        foreach ($contents as $row) {
-            $opcodes = explode(',', $row);
-            $data = array_merge($data, $opcodes);
-        }
+        $deck = new Stack($contents);
+//        $deck->shuffleByInstructions();
+//
+//        $out = $deck->find(2019);
+//        $output->writeln(sprintf(
+//            "Card 2019 is found as number: %s", var_export($out, true)
+//        ));
 
-        $ascii = new SpringDroid($data);
-//        $ascii->createMap();
-
-        $out = $ascii->hullDamage('RUN');
-
+        $deck = new Stack($contents);
+        $out = $deck->findAfterInstructions(2019);
         $output->writeln(sprintf(
-            "Hull damage: %s",$out
+            "Card 2019 is found as number: %s", var_export($out, true)
         ));
     }
+
+    //1778 too low
 }

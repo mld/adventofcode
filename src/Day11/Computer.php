@@ -5,10 +5,8 @@ namespace App\Day11;
 
 class Computer
 {
-
     private $debug;
     private $debug_id;
-
     private $opcodes;
     private $counter;
 
@@ -19,7 +17,6 @@ class Computer
     private $modes;
     private $addr_input;
     private $addr_relative;
-
     public $output;
     public $pauseReason;
     public $running;
@@ -28,28 +25,34 @@ class Computer
     {
         $this->debug = $debug; // set to true to see output on screen
         $this->debug_id = $debug_id;
-        $this->opcodes = array(
-            1 => array('label' => 'add', 'count' => 3),
-            2 => array('label' => 'mul', 'count' => 3),
-            3 => array('label' => ' in', 'count' => 1),
-            4 => array('label' => 'out', 'count' => 1),
-            5 => array('label' => 'jit', 'count' => 2), // jump if true
-            6 => array('label' => 'jif', 'count' => 2), // jump if false
-            7 => array('label' => 'jls', 'count' => 3), // jump if less
-            8 => array('label' => 'jeq', 'count' => 3), // jump if equal
-            9 => array('label' => 'rel', 'count' => 1),
-            99 => array('label' => 'die', 'count' => 0),
-        );
-        $this->valus = array(0, 0, 0);
-        $this->addrs = array(0, 0, 0);
-        $this->modes = array(0, 0, 0); // 0=address, 1=immediate, 2=relative
+        $this->opcodes = [
+            1 => ['label' => 'add', 'count' => 3],
+            2 => ['label' => 'mul', 'count' => 3],
+            3 => ['label' => ' in', 'count' => 1],
+            4 => ['label' => 'out', 'count' => 1],
+            5 => ['label' => 'jit', 'count' => 2], // jump if true
+            6 => ['label' => 'jif', 'count' => 2], // jump if false
+            7 => ['label' => 'jls', 'count' => 3], // jump if less
+            8 => ['label' => 'jeq', 'count' => 3], // jump if equal
+            9 => ['label' => 'rel', 'count' => 1],
+            99 => ['label' => 'die', 'count' => 0],
+        ];
+        $this->valus = [0, 0, 0];
+        $this->addrs = [0, 0, 0];
+        $this->modes = [0, 0, 0]; // 0=address, 1=immediate, 2=relative
         $this->addr_input = -1;
         $this->counter = 0;
         $this->addr_relative = 0;
         $this->running = false;
         $this->pauseReason = ''; // pause on input, output, future (which will show up here)
-        if (trim($codetext) != '') {
+
+        if (!is_array($codetext) && trim($codetext) != '') {
             $this->code = explode(',', $codetext);
+        } else {
+            $this->code = $codetext;
+        }
+
+        if (count($this->code) > 0) {
             foreach ($this->code as $index => $value) {
                 $this->code[$index] = floatval(trim($value));
             }
@@ -63,8 +66,7 @@ class Computer
     {
         $this->code[$this->addr_input] = $value;
         if ($this->debug == true) {
-            echo /*str_pad($this->debug_id,2,' ',STR_PAD_LEFT).' '.*/ ' ' . str_pad($this->addr_input, 2, ' ',
-                    STR_PAD_LEFT) . ' INPUT ' . $value;
+            echo ' ' . str_pad($this->addr_input, 2, ' ', STR_PAD_LEFT) . ' INPUT ' . $value;
         }
         $this->run();
     }
@@ -77,7 +79,7 @@ class Computer
         $continue = true;
         $this->running = true;
         while ($continue == true) {
-            $result = $this->decode_opcode();
+            $this->decode_opcode();
             $log = '';
             if (($this->opcode == 1) || ($this->opcode == 2)) { // add or mul
                 $a = $this->valus[0];
@@ -99,6 +101,8 @@ class Computer
             if ($this->opcode == 4) {  // output
                 $this->output = $this->valus[0];
                 $log = ' out=' . $this->output;
+                $this->pauseReason = 'output';
+                $continue = false;
             }
             if ($this->opcode == 5) { // jump if true
                 if ($this->valus[0] != 0) {

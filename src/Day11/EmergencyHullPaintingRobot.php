@@ -6,17 +6,21 @@ namespace App\Day11;
 
 class EmergencyHullPaintingRobot
 {
-    protected $map;
-    protected $steps;
-    protected $debug;
-    protected $stateMachine;
-    protected $direction;
-    protected $coloredTiles;
+    protected  $map;
+    protected  $steps;
+    protected  $debug;
+    protected  $stateMachine;
+    protected  $orientation;
+    protected  $coloredTiles;
+    protected  $x;
+    protected  $y;
+
     public const DIR_LEFT = 0;
     public const DIR_RIGHT = 1;
     public const DIR_UP = 2;
     public const DIR_DOWN = 3;
     public const DIRECTIONS = ['left', 'right', 'up', 'down'];
+    public const DIRECTIONMARKERS = ['<', '>', '^', 'v'];
 
     public function __construct($steps = [], $debug = false)
     {
@@ -26,7 +30,7 @@ class EmergencyHullPaintingRobot
         $this->x = 0;
         $this->y = 0;
         $this->debug = $debug;
-        $this->direction = self::DIR_UP;
+        $this->orientation = self::DIR_UP;
     }
 
     public function paint($color)
@@ -49,35 +53,35 @@ class EmergencyHullPaintingRobot
     {
         switch ($direction) {
             case self::DIR_LEFT:
-                switch ($this->direction) {
+                switch ($this->orientation) {
                     case self::DIR_LEFT:
-                        $this->direction = self::DIR_DOWN;
+                        $this->orientation = self::DIR_DOWN;
                         break;
                     case self::DIR_RIGHT:
-                        $this->direction = self::DIR_UP;
+                        $this->orientation = self::DIR_UP;
                         break;
                     case self::DIR_UP:
-                        $this->direction = self::DIR_LEFT;
+                        $this->orientation = self::DIR_LEFT;
                         break;
                     case self::DIR_DOWN:
-                        $this->direction = self::DIR_RIGHT;
+                        $this->orientation = self::DIR_RIGHT;
                         break;
                 }
                 break;
 
             case self::DIR_RIGHT:
-                switch ($this->direction) {
+                switch ($this->orientation) {
                     case self::DIR_LEFT:
-                        $this->direction = self::DIR_UP;
+                        $this->orientation = self::DIR_UP;
                         break;
                     case self::DIR_RIGHT:
-                        $this->direction = self::DIR_DOWN;
+                        $this->orientation = self::DIR_DOWN;
                         break;
                     case self::DIR_UP:
-                        $this->direction = self::DIR_RIGHT;
+                        $this->orientation = self::DIR_RIGHT;
                         break;
                     case self::DIR_DOWN:
-                        $this->direction = self::DIR_LEFT;
+                        $this->orientation = self::DIR_LEFT;
                         break;
                 }
                 break;
@@ -86,7 +90,7 @@ class EmergencyHullPaintingRobot
 
     public function move()
     {
-        switch ($this->direction) {
+        switch ($this->orientation) {
             case self::DIR_LEFT:
                 $this->x++;
                 break;
@@ -105,6 +109,10 @@ class EmergencyHullPaintingRobot
 
     public function run()
     {
+//        $orientation = 'up';
+//        $moves = array(   'up'=> array('left','right'), 'left' => array('down','up'),
+//            'down'=> array('right','left'), 'right'=> array('up','down'));
+
         //$filename = __DIR__ . '/inputs/09.txt';
         //
         //$code = file_get_contents($filename);
@@ -116,7 +124,7 @@ class EmergencyHullPaintingRobot
         //echo "\n" . $pc->output . "\n";
         $inputs = [];
 
-        $this->stateMachine = new Computer(join(",", $this->steps), false, true);
+        $this->stateMachine = new Computer( $this->steps, true, true,0);
 
         do {
 //            printf("Color of %d,%d: %s\n", $this->x, $this->y, $this->getColor());
@@ -125,17 +133,18 @@ class EmergencyHullPaintingRobot
 //            printf("Painting %d,%d: %s\n", $this->x, $this->y, $paintColor);
             $paintColor = $this->stateMachine->output;
             $this->paint($paintColor);
-            $this->stateMachine->run();
+
+//            $this->stateMachine->run();
             $move = $this->stateMachine->output;
-            printf("Pointing %s and moving %s from %d,%d\n", self::DIRECTIONS[$this->direction],
-                self::DIRECTIONS[$move], $this->x, $this->y);
+//            printf("Pointing %s and moving %s from %d,%d\n", self::DIRECTIONMARKERS[$this->direction],
+//                self::DIRECTIONS[$move], $this->x, $this->y);
             $this->turn($move);
             $this->move();
         } while ($this->stateMachine->running);
 
-        if ($this->debug) {
-            printf("Run ended with output %d\n", $this->coloredTiles);
-        }
+//        if ($this->debug) {
+//            printf("Run ended with output %d\n", $this->coloredTiles);
+//        }
 
         $minY = 0;
         $maxY = 0;

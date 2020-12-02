@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Day15\Point;
 use App\Day15\RepairDroid;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

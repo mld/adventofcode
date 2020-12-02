@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Day09\StateMachine;
+use App\Day11\Computer;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,6 +39,10 @@ class Day9Part1Command extends FileInputCommand
         // 0 - not it
         // 203 - too low
 
-        $output->writeln('Code: ' . $sum);
+        $m = new Computer(join(',',$data),true,true);
+        $m->input(1);
+        $sum2 = $m->output;
+
+        $output->writeln('Code: ' . $sum . ' : ' . $sum2);
     }
 }

@@ -7,13 +7,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Day21Part1Command extends FileInputCommand
+class Day21Part2Command extends FileInputCommand
 {
     protected function configure()
     {
         $this
-            ->setName('day21:walk')
-            ->setDescription('Day 21 / part 1')
+            ->setName('day21:run')
+            ->setDescription('Day 21 / part 2')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
     }
@@ -31,7 +31,7 @@ class Day21Part1Command extends FileInputCommand
         $ascii = new SpringDroid($data);
 //        $ascii->createMap();
 
-        $out = $ascii->hullDamage();
+        $out = $ascii->hullDamage('RUN');
 
         $output->writeln(sprintf(
             "Hull damage: %s",$out

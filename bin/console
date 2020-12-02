@@ -1,4 +1,4 @@
-#!/usr/bin/env php -d memory_limit=512M
+#!/usr/bin/env php -d memory_limit=2048M
 <?php
 //  -d memory_limit=512M
 
@@ -7,7 +7,7 @@ use App\Command as C;
 require __DIR__ . '/../vendor/autoload.php';
 
 // Create application
-$app = new Symfony\Component\Console\Application('Advent of Code', '2019.0.1');
+$app = new Symfony\Component\Console\Application('Advent of Code', '2019.12.25');
 
 // Load commands into application
 foreach (glob(__DIR__ . '/../src/Command/Day*.php') as $file) {

@@ -2,18 +2,18 @@
 
 namespace App\Command;
 
-use App\Day17\Ascii;
+use App\Day21\SpringDroid;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Day17Part1Command extends FileInputCommand
+class Day21Part1Command extends FileInputCommand
 {
     protected function configure()
     {
         $this
-            ->setName('day17:ascii')
-            ->setDescription('Day 17 / part 1')
+            ->setName('day21:walk')
+            ->setDescription('Day 21 / part 1')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
     }
@@ -28,13 +28,13 @@ class Day17Part1Command extends FileInputCommand
             $data = array_merge($data, $opcodes);
         }
 
-        $ascii = new Ascii($data);
-        $ascii->createMap();
+        $ascii = new SpringDroid($data);
+//        $ascii->createMap();
+
+        $out = $ascii->hullDamage();
 
         $output->writeln(sprintf(
-            "Calculate the sum of the product of all the crossing scaffolds"
+            "Hull damage: %s",$out
         ));
-
-        // 4220
     }
 }

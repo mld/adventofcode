@@ -39,5 +39,7 @@ class Day11Part1Command extends FileInputCommand
         // 1256 too low
         // 2610 too high
         // 1313 not right
+        // 2068 not right
+        // 2041
     }
 }

@@ -29,13 +29,7 @@ class Day15Part1Command extends FileInputCommand
         }
 
         $robot = new RepairDroid($data);
-        $out = $robot->run(false);
+        $robot->run(false);
 
-//        $output->writeln(sprintf(
-//            "Steps: %d (but really, 248)",
-//            $out
-//        ));
-
-        //
     }
 }

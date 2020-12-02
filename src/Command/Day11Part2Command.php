@@ -2,19 +2,18 @@
 
 namespace App\Command;
 
-use App\Day09\StateMachine;
-use App\Day11\Computer;
+use App\Day11\EmergencyHullPaintingRobot;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Day9Part2Command extends FileInputCommand
+class Day11Part2Command extends FileInputCommand
 {
     protected function configure()
     {
         $this
-            ->setName('day9:boost')
-            ->setDescription('Day 9 / part 2')
+            ->setName('day11:registration')
+            ->setDescription('Day 11 / part 2')
             ->addArgument('filename', InputArgument::OPTIONAL, 'Input to script.')
             ->setHelp('');
     }
@@ -22,26 +21,22 @@ class Day9Part2Command extends FileInputCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $contents = $this->parseFiles($input->getArgument('filename'));
+
         $data = [];
         foreach ($contents as $row) {
             $opcodes = explode(',', $row);
             $data = array_merge($data, $opcodes);
         }
 
-        $m = new StateMachine($data, false);
-        $input = 2;
-        while (!$m->isTerminated()) {
-            $sum = $m->run($input);
-            $input = [];
-        }
+        $robot = new EmergencyHullPaintingRobot($data);
+        $robot->paint(1);
+        $out = $robot->run();
 
+//        $output->writeln(sprintf(
+//            "Painted panels: %d",
+//            $out
+//        ));
 
-        $m = new Computer(join(',',$data),true,false);
-        $m->input(2);
-        $sum2 = $m->output;
-
-        $output->writeln('Code: ' . $sum . ' : ' . $sum2);
-
-        $output->writeln('Code: ' . $sum);
+        // ZRZPKEZR
     }
 }

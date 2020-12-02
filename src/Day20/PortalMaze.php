@@ -2,7 +2,7 @@
 
 namespace App\Day20;
 
-use App\Day15\Point;
+use App\Day10\Point;
 
 class PortalMaze
 {
@@ -10,6 +10,8 @@ class PortalMaze
     protected $debug;
     protected $maze;
     protected $portals;
+    protected $portalLevel;
+    protected $portalNames;
     protected $entrance;
     protected $exit;
 
@@ -18,6 +20,9 @@ class PortalMaze
         $this->raw = $raw;
         $this->maze = [];
         $this->debug = $debug;
+        $this->portals = [];
+        $this->portalLevel = [];
+        $this->portalNames = [];
     }
 
     public function parseMaze()
@@ -81,6 +86,19 @@ class PortalMaze
             }
         }
 
+        $minY = PHP_INT_MAX;
+        $maxY = PHP_INT_MIN;
+        $minX = min(array_keys($this->maze));
+        $maxX = max(array_keys($this->maze));
+        foreach (array_keys($this->maze) as $x) {
+            if ($minY > min(array_keys($this->maze[$x]))) {
+                $minY = min(array_keys($this->maze[$x]));
+            }
+            if ($maxY < max(array_keys($this->maze[$x]))) {
+                $maxY = max(array_keys($this->maze[$x]));
+            }
+        }
+
         foreach (array_keys($portals) as $portal) {
             if ($portal == 'AA') {
                 $this->entrance = $portals[$portal][0];
@@ -89,6 +107,25 @@ class PortalMaze
             } else {
                 $this->portals[$portals[$portal][0]->x][$portals[$portal][0]->y] = $portals[$portal][1];
                 $this->portals[$portals[$portal][1]->x][$portals[$portal][1]->y] = $portals[$portal][0];
+                $this->portalNames[$portals[$portal][0]->x][$portals[$portal][0]->y] = $portal;
+                $this->portalNames[$portals[$portal][1]->x][$portals[$portal][1]->y] = $portal;
+
+                // also set inner/outer portal status
+                if (
+                    $portals[$portal][0]->x < $minX + 2 ||
+                    $portals[$portal][0]->x > $maxX - 2 ||
+                    $portals[$portal][0]->y < $minY + 2 ||
+                    $portals[$portal][0]->y < $maxY - 2
+                ) {
+                    // First portal is the outer portal
+                    $this->portalLevel[$portals[$portal][0]->x][$portals[$portal][0]->y] = -1;
+                    $this->portalLevel[$portals[$portal][1]->x][$portals[$portal][1]->y] = +1;
+
+                } else {
+                    // Second portal is the outer portal
+                    $this->portalLevel[$portals[$portal][1]->x][$portals[$portal][1]->y] = -1;
+                    $this->portalLevel[$portals[$portal][0]->x][$portals[$portal][0]->y] = +1;
+                }
             }
         }
 //        print_r($portals);
@@ -129,7 +166,7 @@ class PortalMaze
                 // Wall, or space, or something
 //                printf(" - %s Found a wall or space or something!\n", $p);
                 continue;
-            }elseif (Point::eq($point,$p)) {
+            } elseif (Point::eq($point, $p)) {
                 // Didn't move
 //                printf(" - %s We didn't move...\n", $p);
                 continue;
@@ -159,16 +196,73 @@ class PortalMaze
         return min($result);
     }
 
+    public function shortest3DPathToExit(
+        array &$map = [],
+        Point3D $point = null,
+        int $steps = 0,
+        array &$stepMap = []
+    ) {
+        if (count($map) == 0) {
+            $map = array_merge($this->maze);
+        }
+        if ($point == null) {
+            $point = Point3D::from2D($this->entrance, 0);
+        }
+
+        $stepMap[$point->x][$point->y][$point->z] = $steps;
+
+        $result = [];
+
+        printf("%d: %s\n", $steps, $point);
+        for ($direction = 1; $direction <= 5; $direction++) {
+            $stepMap[$point->x][$point->y][$point->z] = $steps;
+
+            $p = $this->moveInDirection3d($point, $direction);
+            $peek = $this->peek(Point3D::Point2D($p), $map);
+
+
+            if ($peek == false) {
+                // Wall, or space, or something
+//                printf(" - %s Found a wall or space or something!\n", $p);
+                continue;
+            } elseif ($p->z > 1000 || $p->z < -1000) {
+                // Didn't move
+//                printf(" - %s We didn't move...\n", $p);
+                continue;
+            } elseif (Point3D::eq($point, $p)) {
+                // Didn't move
+//                printf(" - %s We didn't move...\n", $p);
+                continue;
+            } elseif (isset($stepMap[$p->x][$p->y][$p->z]) && $stepMap[$p->x][$p->y][$p->z] < $steps) {
+                // We've been there already, but with fewer steps.
+//                printf(" - %s Move forward, not backwards!\n", $p);
+                continue;
+            } elseif (Point3D::eq($p, Point3D::from2D($this->exit, $p->z))) {
+                printf(" - %s Next step is the exit! (%s)\n", $p, $peek);
+                $stepMap[$p->x][$p->y] = $steps + 1;
+                return ($steps);
+                continue;
+            } elseif ($peek == '.') {
+                // It's either closer this way, or it's a new spot
+
+                printf("%d: %s / %s\n", $steps, $p, $peek);
+
+                // Find out if there's anything better that way
+                $result[] = $this->shortest3DPathToExit($map, $p, $steps + 1, $stepMap);
+            } else {
+                continue;
+            }
+        }
+        if (count($result) == 0) {
+            return PHP_INT_MAX;
+        }
+        return min($result);
+    }
+
     public function peek(Point $point, &$map, $portals = [])
     {
         $x = $point->x;
         $y = $point->y;
-
-        // Manage portals when peeking
-//        if (isset($this->portals[$point->x][$point->y])) {
-//            $x = $this->portals[$point->x][$point->y]->x;
-//            $y = $this->portals[$point->x][$point->y]->y;
-//        }
 
         if (isset($map[$x][$y])) {
             if ($map[$x][$y] == '#') {
@@ -186,6 +280,47 @@ class PortalMaze
         }
         // Here be dragons... Or a wall. Your choice.
         return false;
+    }
+
+    public function moveInDirection3d(Point3D $point, int $direction): Point3D
+    {
+        $x = $point->x;
+        $y = $point->y;
+        $z = $point->z;
+
+        switch ($direction) {
+            case 1: // north
+                $y--;
+                break;
+            case 2: // south
+                $y++;
+                break;
+            case 3: // west
+                $x--;
+                break;
+            case 4: // east
+                $x++;
+                break;
+            case 5: // use portal
+                if (isset($this->portals[$point->x][$point->y])) {
+                    $portal = $this->portals[$point->x][$point->y];
+                    $x = $portal->x;
+                    $y = $portal->y;
+                    $z += $this->portalLevel[$point->x][$point->y];
+                    $newPoint = new Point3D($x, $y, $z);
+                    printf("Entering portal %s, teleporting from %s to %s (z: %d, %d)\n",
+                        $this->portalNames[$point->x][$point->y],
+                        $point,
+                        $newPoint,
+                        $this->portalLevel[$point->x][$point->y], $z
+                    );
+                }
+                break;
+        }
+
+        $newPoint = new Point3D($x, $y, $z);
+
+        return $newPoint;
     }
 
     public function moveInDirection(Point $point, int $direction): Point
