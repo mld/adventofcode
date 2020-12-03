@@ -15,7 +15,7 @@ class TobogganTrajectoryTest extends \PHPUnit\Framework\TestCase
      * @param int $moveX
      * @param int $moveY
      * @param int $expected
-     * @covers       \App\Day01\ExpenseReport
+     * @covers       \App\Day03\TobogganTrajectory
      */
     public function testTobogganTrajectory(array $rows, int $moveX, int $moveY, int $expected)
     {
