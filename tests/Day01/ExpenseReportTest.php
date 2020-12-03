@@ -1,11 +1,10 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace App\Tests\Day01;
 
 use App\Day01;
-
 
 class ExpenseReportTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +19,7 @@ class ExpenseReportTest extends \PHPUnit\Framework\TestCase
     {
         $module = new Day01\ExpenseReport($rows);
 
-        $this->assertEquals($expected, array_product( $module->getRowsBySum()));
+        $this->assertEquals($expected, array_product($module->getRowsBySum()));
     }
 
     /**
