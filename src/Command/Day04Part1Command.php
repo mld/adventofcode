@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Day04\Passports;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +21,8 @@ class Day04Part1Command extends FileInputCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $contents = $this->parseFiles($input->getArgument('filename'));
-
+        $pp = new Passports($contents);
+        $output->writeln(sprintf("%d valid passports",$pp->validPassports()));
         return 0;
     }
 }
