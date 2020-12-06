@@ -22,7 +22,7 @@ class Day04Part1Command extends FileInputCommand
     {
         $contents = $this->parseFiles($input->getArgument('filename'));
         $pp = new Passports($contents);
-        $output->writeln(sprintf("%d valid passports",$pp->validPassports()));
+        $output->writeln(sprintf("%d valid passports", $pp->validPassports()));
         return 0;
     }
 }

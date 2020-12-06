@@ -22,7 +22,7 @@ class Day04Part2Command extends FileInputCommand
     {
         $contents = $this->parseFiles($input->getArgument('filename'));
         $pp = new Passports($contents);
-        $output->writeln(sprintf("%d valid passports",$pp->validPassports(false)));
+        $output->writeln(sprintf("%d valid passports", $pp->validPassports(false)));
         return 0;
     }
     /// 226 too high

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Day05;
-
 
 class BoardingPass
 {
@@ -10,8 +8,8 @@ class BoardingPass
     /** @var array<mixed> */
     protected $list;
 
-    const ROWS = 128;
-    const SEATS_PER_ROW = 8;
+    public const ROWS = 128;
+    public const SEATS_PER_ROW = 8;
 
     /**
      * Passports constructor.
@@ -29,14 +27,21 @@ class BoardingPass
     {
         $this->list = [];
         foreach ($input as $row) {
-            $filteredInput = filter_var(trim($row), FILTER_VALIDATE_REGEXP,
-                ['options' => ['regexp' => '|^[FB]{7}[LR]{3}$|']]);
+            $filteredInput = filter_var(
+                trim($row),
+                FILTER_VALIDATE_REGEXP,
+                ['options' => ['regexp' => '|^[FB]{7}[LR]{3}$|']]
+            );
             if ($filteredInput !== false) {
                 $this->list[(string)$filteredInput] = self::getSeating((string)$filteredInput);
             }
         }
     }
 
+    /**
+     * @param string $boardingpass
+     * @return array<int>
+     */
     public static function getSeating(string $boardingpass): array
     {
         $parts = str_split($boardingpass);
@@ -66,7 +71,11 @@ class BoardingPass
             }
         }
         printf("Row: %d, Column: %d, Seat: %d\n", $row['min'], $column['min'], ($row['min'] * 8 + $column['min']));
-        return ['row' => $row['min'], 'column' => $column['min'], 'seat' => ($row['min'] * 8 + $column['min'])];
+        return [
+            'row' => (int)$row['min'],
+            'column' => (int)$column['min'],
+            'seat' => (int)($row['min'] * 8 + $column['min'])
+        ];
     }
 
     public function getHighestSeatId(): int
@@ -107,5 +116,6 @@ class BoardingPass
 
             return $seat;
         }
+        return -1;
     }
 }

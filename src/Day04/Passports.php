@@ -27,6 +27,9 @@ class Passports
         printf("Found %d passports\n", count($parts));
         foreach ($parts as $row) {
             $inputs = preg_split('|\s|', $row);
+            if ($inputs === false) {
+                continue;
+            }
             $passport = [];
             foreach ($inputs as $input) {
                 $field = explode(':', $input);
@@ -36,6 +39,11 @@ class Passports
         }
     }
 
+    /**
+     * @param array<string> $passport
+     * @param bool $simple
+     * @return bool
+     */
     public static function isValid(array $passport, bool $simple = true): bool
     {
         $requiredFields = [

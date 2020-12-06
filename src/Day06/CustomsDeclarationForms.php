@@ -31,7 +31,7 @@ class CustomsDeclarationForms
     public function countDistinctYesInGroup(string $input): int
     {
         $entry = preg_replace('/\s+/', '', $input);
-        if ($entry === false) {
+        if ($entry === null) {
             return 0;
         }
         if (strlen($entry) == 0) {
@@ -48,7 +48,7 @@ class CustomsDeclarationForms
         $work = null;
         foreach ($input as $entry) {
             $entry = preg_replace('/\s+/', '', $entry);
-            if ($entry === false) {
+            if ($entry === null) {
                 continue;
             }
             if (strlen($entry) == 0) {
