@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Day08\HandheldHalting;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +21,8 @@ class Day08Part1Command extends FileInputCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $contents = $this->parseFiles($input->getArgument('filename'));
-
+        $hh = new HandheldHalting($contents);
+        $output->writeln("Accumulator value when looping: " . $hh->runUntilLoop());
         return 0;
     }
 }
