@@ -29,7 +29,7 @@ class HandyHaversacks
             $bag = sprintf('%s %s', $pattern, $color);
 
             $parts = explode(' contain ', trim($row));
-            if ($parts === false) {
+            if (!is_array($parts)) {
                 continue;
             }
 
@@ -73,6 +73,10 @@ class HandyHaversacks
         return $count;
     }
 
+    /**
+     * @param string $needle
+     * @return string[]
+     */
     public function findParents(string $needle): array
     {
         $found = [$needle];
@@ -86,6 +90,10 @@ class HandyHaversacks
         return array_unique($found);
     }
 
+    /**
+     * @param string $needle
+     * @return string[]
+     */
     public function findChildren(string $needle): array
     {
         $found = [$needle];

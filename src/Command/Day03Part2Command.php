@@ -45,7 +45,6 @@ class Day03Part2Command extends FileInputCommand
         $fix[] = $trees;
         $output->writeln(sprintf("Found %d trees", $trees));
 
-        // 40689600 too low
         $sum = array_product($fix);
         $output->writeln(sprintf("Answer %d", $sum));
         return 0;

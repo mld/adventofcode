@@ -23,7 +23,7 @@ class Day07Part1Command extends FileInputCommand
         $contents = $this->parseFiles($input->getArgument('filename'));
         $hh = new HandyHaversacks($contents);
         $count = $hh->bagsThatMayContainBag('shiny gold');
-        $output->writeln(sprintf('Found %d bags that could contain at least one shiny gold bag.',$count));
+        $output->writeln(sprintf('Found %d bags that could contain at least one shiny gold bag.', $count));
         return 0;
     }
 }

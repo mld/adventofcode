@@ -25,5 +25,4 @@ class Day04Part2Command extends FileInputCommand
         $output->writeln(sprintf("%d valid passports", $pp->validPassports(false)));
         return 0;
     }
-    /// 226 too high
 }
