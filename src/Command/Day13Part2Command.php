@@ -23,8 +23,6 @@ class Day13Part2Command extends FileInputCommand
         $contents = $this->parseFiles($input->getArgument('filename'));
         $ss = new ShuttleSearch($contents);
         $output->writeln(sprintf("Gold coin timestamp: %d", $ss->part2()));
-        // 1 024 220 991 808 692 too high
-        // 100 000 000 000 000
         return 0;
     }
 }

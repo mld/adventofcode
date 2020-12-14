@@ -68,10 +68,8 @@ class ShuttleSearch
             $departures[] = $key;
         }
         $timestamp = intdiv(100000000000000, (int)$maxId) * (int)$maxId;
-        $iterations = 0;
         printf("Starting point: %d, max id=%d, min id=%d\n", $timestamp, $maxId, $minId);
         do {
-            // ok, we need to check on this one
 //            printf("%d:\n",$timestamp);
             $relTs = $timestamp - $maxKey;
             foreach ($departures as $departure) {
@@ -174,6 +172,7 @@ class ShuttleSearch
      * ..................
      * x % num[k-2] = rem[k-1]
      * where rem[] is array_keys($list) and num[] is $list
+     * refer to post for details: https://www.geeksforgeeks.org/chinese-remainder-theorem-set-2-implementation/
      * @param array<int> $list
      * @return int
      */
