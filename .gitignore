@@ -27,3 +27,4 @@ fabric.properties
 /build/
 /slask/
 .phpunit.result.cache
+/old/
