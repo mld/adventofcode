@@ -39,6 +39,9 @@ class CustomsDeclarationForms
         }
 
         $count = count_chars($entry, 1);
+        if (!is_array($count)) {
+            return 0;
+        }
         return count($count);
     }
 
@@ -56,6 +59,9 @@ class CustomsDeclarationForms
             }
 
             $entryCount = count_chars($entry, 1);
+            if (!is_array($entryCount)) {
+                continue;
+            }
             if ($work === null) {
                 $work = $entryCount;
             }

@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Day19\MonsterMessages;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +21,8 @@ class Day19Part2Command extends FileInputCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $contents = $this->parseFiles($input->getArgument('filename'));
-
+        $mm = new MonsterMessages($contents);
+        $output->writeln(sprintf("%s: %d", $this->getName(), $mm->part2()));
         return 0;
     }
 }

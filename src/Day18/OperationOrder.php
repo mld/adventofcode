@@ -2,8 +2,6 @@
 
 namespace App\Day18;
 
-use function Symfony\Component\String\s;
-
 class OperationOrder
 {
     /**

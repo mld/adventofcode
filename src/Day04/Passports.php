@@ -80,6 +80,10 @@ class Passports
         ];
         $filtered = filter_var_array($passport, $filters);
 
+        if ($filtered === false) {
+            return false;
+        }
+
 //        print_r(['passport' => $passport, 'filtered' => $filtered]);
         if (!isset($filtered['hgt'])) {
             return false;
