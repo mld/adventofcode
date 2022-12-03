@@ -6,14 +6,9 @@ use App\Solution;
 
 class _02 extends Solution
 {
+    protected array $guide = [];
 
-    # A > Z
-    # B > X
-    # C > Y
-
-    protected $guide = [];
-
-    protected $scoring = [
+    protected array $scoring = [
         'rock' => 1,
         'paper' => 2,
         'scissors' => 3,
@@ -24,7 +19,6 @@ class _02 extends Solution
 
     public function __construct(array $attributes = [])
     {
-        // $this->year and $this->day is set through attributes, and $this->raw is populated from puzzle input
         parent::__construct($attributes);
 
         foreach ($this->getLinesFromRaw() as $line) {
@@ -65,9 +59,6 @@ class _02 extends Solution
 
     public function part2(): int
     {
-        // TODO: Implement part2() method.
-
-
         $hand = [
             'A' => 'rock',
             'B' => 'paper',
