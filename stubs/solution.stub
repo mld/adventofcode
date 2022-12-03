@@ -1,0 +1,31 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Solution;
+
+class {{ class }} extends Solution
+{
+
+    public function __construct(array $attributes = [])
+    {
+        // $this->year and $this->day is set through attributes, and $this->raw is populated from puzzle input
+        parent::__construct($attributes);
+
+        // Todo: Add any manipulations to the raw input that you would like
+    }
+
+    public function part1(): int
+    {
+        // TODO: Implement part1() method.
+
+        return 0;
+    }
+
+    public function part2(): int
+    {
+        // TODO: Implement part2() method.
+
+        return 0;
+    }
+}
