@@ -1,69 +1,62 @@
-## aoc-cli
+# Advent of Code
 
-`gem install aoc_cli`
+So. This is a weird one. I figured I needed to get better at writing Laravel Artisan commands, so here we are. A huge bunch of bloat that will never be needed for a cli, ever. And not much code related to Laravel or Artisan commands in the actual day to day of solving AoC puzzles.
 
-## the rest
+Anyway, go check out [Advent of Code](https://adventofcode.com/) if you're not familiar already. And if you think it's fun and have the means, please consider donating to the creator who spends a whole lot of his spare time every year to create this for us!
 
+## Tooling
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+First off, make sure you have your AoC session token in the ENV `AOC_SESSION_COOKIE` and have run `composer install`. Then you can use the few commands that are available.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+### `aoc:make <yyyy> <dd>`
 
-## About Laravel
+This commands downloads the puzzle and input for the day given in params, and also converts the puzzle to markdown and extracts (previously give) answers from the puzzle description.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```shell
+$ artisan aoc:make 2022 1
+Calling make:solution
+   INFO  AbstractSolution [app/Solutions/_2022/_01.php] created successfully.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Fetching input
+Fetching puzzle
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Puzzle and input files are stored in `storage/app/<year>/<day>/` or `app/storage/2022/01/` in the example above.
 
-## Learning Laravel
+The PHP file (`app/Solutions/_2022/_01.php` in the example above) is created from the stub file in `stubs/solution.stub`.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+There's also an option `-f|--fetch` to re-fetch the puzzle from the AoC site. This is needed to fetch part 2 after you've completed part 1, and to extract the answers connected to your `input`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### `aoc <yyyy> <dd> <part> [<input>]`
 
-## Laravel Sponsors
+This command tries to run your code against the given input file, and if one exists, compares it to the correct answer (for `input`, the answer to part 1 is saved in `input.part1.answer` and for part 2 `input.part2.answer`).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+```shell
+$ ls storage/app/2022/01/
+input			input.part2.answer	puzzle.md		test1.part1.answer
+input.part1.answer	puzzle.html		test1			test1.part2.answer
 
-### Premium Partners
+$ artisan aoc 2022 1 1 test1
+Solution for 2022/01/1 found in 0.000 seconds:
+	24000
+ =	24000
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
+$ artisan aoc 2022 1 2 test1
+Solution for 2022/01/2 found in 0.000 seconds:
+	45000
+ =	45000
 
-## Contributing
+$ artisan aoc 2022 1 1
+Solution for 2022/01/1 found in 0.000 seconds:
+	69281
+ =	69281
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+$ artisan aoc 2022 1 2
+Solution for 2022/01/2 found in 0.000 seconds:
+	201524
+ =	201524
+```
 
-## Code of Conduct
+In this example you can see we're running part 1 and 2 of the first day of the 2022 calendar. We've created a test case from the puzzle data (`test1`, `test1.part1.answer` and `test1.part2.answer`) and can use them to make sure (depending on sneakiness of the puzzle of course :D ) that we're on the right track for a correct answer.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+We also have the answers for `input`, since we've re-run the `aoc:make` command with `-f` before writing this readme.
