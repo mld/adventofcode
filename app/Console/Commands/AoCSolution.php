@@ -92,7 +92,7 @@ class AoCSolution extends Command
                 // if the article isn't found, bail out
                 break;
             }
-            $html = $article->html();
+            $html .= $article->html();
 
 
             // Add answer to html (if found)
