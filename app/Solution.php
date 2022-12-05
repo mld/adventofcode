@@ -14,6 +14,8 @@ abstract class Solution
     public string $raw;
     public string $input;
 
+    protected bool $verbose;
+
     public function __construct(array $attributes = [])
     {
         $this->year = $attributes['year'];
@@ -21,11 +23,24 @@ abstract class Solution
 
         $inputFilename = $attributes['file'] ?? self::__DEFAULT_INPUT;
         $this->raw = Storage::get(self::inputFilename($this->year, $this->day, $inputFilename));
+
+        $this->verbose = $attributes['verbose'] ?? false;
     }
 
-    public function getLinesFromRaw(): array
+    protected function debug(string $string): void
     {
-        return explode("\n", trim($this->raw));
+        if (!$this->verbose) {
+            return;
+        }
+        printf("%s", $string);
+    }
+
+    public function getLinesFromRaw(bool $trim = true): array
+    {
+        if ($trim) {
+            return explode("\n", trim($this->raw));
+        }
+        return explode("\n", $this->raw);
     }
 
     public function getArrayFromRaw(): array
@@ -47,8 +62,8 @@ abstract class Solution
     public function solve(int $part): string
     {
         return match ($part) {
-            1 => $this->part1(),
-            2 => $this->part2(),
+            1 => (string)$this->part1(),
+            2 => (string)$this->part2(),
             default => 'no such part',
         };
     }

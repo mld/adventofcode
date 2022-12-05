@@ -43,6 +43,7 @@ class AoC extends Command
         $day = (int)$this->argument('day');
         $part = (int)$this->argument('part');
         $file = (string)$this->argument('file');
+
         $input = Solution::inputFilename($year, $day, $file);
         $answers[] = Solution::inputFilename($year, $day, $file . '.part' . $part . '.answer');
         $answers[] = Solution::inputFilename($year, $day, $file . '.answer');
@@ -65,7 +66,12 @@ class AoC extends Command
         }
 
         /** @var Solution $solution */
-        $solution = new $solutionName(['year' => $year, 'day' => $day, 'file' => $file]);
+        $solution = new $solutionName([
+            'year' => $year,
+            'day' => $day,
+            'file' => $file,
+            'verbose' => $this->option('verbose')
+        ]);
 
         // time it!
         $start = microtime(true);
@@ -82,12 +88,27 @@ class AoC extends Command
         );
         $this->line("\t" . $result);
 
+        // Compare result from function with the verified result
+        $answerFound = false;
         foreach ($answers as $answer) {
             if (Storage::exists($answer)) {
+                $answerFound = true;
                 $this->line(" =\t" . trim(Storage::get($answer)));
+
+                if ($result == trim(Storage::get($answer))) {
+                    // This answer is correct!
+                    return 0;
+                }
                 break;
             }
         }
+
+        // If there's an existing answer file and we still got here, it's the wrong answer
+        if ($answerFound) {
+            return 1;
+        }
+
+        // If we got here, we are not sure of the answer, so it _could_ be correct.
         return 0;
     }
 }
